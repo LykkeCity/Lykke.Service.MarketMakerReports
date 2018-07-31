@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lykke.Service.MarketMakerReports.Client</name>
+    </assembly>
+    <members>
+        <member name="T:Lykke.Service.MarketMakerReports.Client.AutofacExtension">
+            <summary>
+            Autofac extension for service client.
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.MarketMakerReports.Client.AutofacExtension.RegisterMarketMakerReportsClient(Autofac.ContainerBuilder,Lykke.Service.MarketMakerReports.Client.MarketMakerReportsServiceClientSettings,System.Func{Lykke.HttpClientGenerator.HttpClientGeneratorBuilder,Lykke.HttpClientGenerator.HttpClientGeneratorBuilder})">
+            <summary>
+            Registers <see cref="T:Lykke.Service.MarketMakerReports.Client.IMarketMakerReportsClient"/> in Autofac container using <see cref="T:Lykke.Service.MarketMakerReports.Client.MarketMakerReportsServiceClientSettings"/>.
+            </summary>
+            <param name="builder">Autofac container builder.</param>
+            <param name="settings">MarketMakerReports client settings.</param>
+            <param name="builderConfigure">Optional <see cref="T:Lykke.HttpClientGenerator.HttpClientGeneratorBuilder"/> configure handler.</param>
+        </member>
+        <member name="T:Lykke.Service.MarketMakerReports.Client.IMarketMakerReportsApi">
+            <summary>
+            MarketMakerReports client API interface.
+            </summary>
+        </member>
+        <member name="T:Lykke.Service.MarketMakerReports.Client.IMarketMakerReportsClient">
+            <summary>
+            MarketMakerReports client interface.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.MarketMakerReports.Client.IMarketMakerReportsClient.Api">
+            <summary>Application Api interface</summary>
+        </member>
+        <member name="T:Lykke.Service.MarketMakerReports.Client.MarketMakerReportsClient">
+            <summary>
+            MarketMakerReports API aggregating interface.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.MarketMakerReports.Client.MarketMakerReportsClient.Api">
+            <summary>Inerface to MarketMakerReports Api.</summary>
+        </member>
+        <member name="M:Lykke.Service.MarketMakerReports.Client.MarketMakerReportsClient.#ctor(Lykke.HttpClientGenerator.IHttpClientGenerator)">
+            <summary>C-tor</summary>
+        </member>
+        <member name="T:Lykke.Service.MarketMakerReports.Client.MarketMakerReportsServiceClientSettings">
+            <summary>
+            MarketMakerReports client settings.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.MarketMakerReports.Client.MarketMakerReportsServiceClientSettings.ServiceUrl">
+            <summary>Service url.</summary>
+        </member>
+    </members>
+</doc>

@@ -1,2 +1,2 @@
 # Lykke.Service.MarketMakerReports
-Reports for market makers
+This service aggregate events from market makers and provides reports.
