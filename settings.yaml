@@ -1,0 +1,25 @@
+MarketMakerReportsService:
+  Db:
+    DataConnectionString:
+      settings-key: MarketMakerReportsService-DataConnectionString
+      types:
+        - AzureTableStorage
+    
+    LogsConnectionString:
+      settings-key: MarketMakerReportsService-LogsConnectionString
+      types:
+        - AzureTableStorage
+
+MonitoringServiceClient:
+  MonitoringServiceUrl:
+    settings-key: MonitoringServiceUrl
+    
+SlackNotifications:
+  AzureQueue:
+    ConnectionString:
+      settings-key: SlackNotificationsConnString
+      types:
+        - AzureTableStorage
+    
+    QueueName:
+      settings-key: SlackQueueName
