@@ -1,0 +1,22 @@
+{
+  "MarketMakerReportsService":
+  {
+    "Db":
+    {
+      "DataConnectionString": "${MarketMakerReportsService-DataConnectionString}:[AzureTableStorage]",
+      "LogsConnectionString": "${MarketMakerReportsService-LogsConnectionString}:[AzureTableStorage]"
+    }
+  },
+  "MonitoringServiceClient":
+  {
+    "MonitoringServiceUrl": "${MonitoringServiceUrl}"
+  },
+  "SlackNotifications":
+  {
+    "AzureQueue":
+    {
+      "ConnectionString": "${SlackNotificationsConnString}:[AzureTableStorage]",
+      "QueueName": "slack-notifications"
+    }
+  }
+}
