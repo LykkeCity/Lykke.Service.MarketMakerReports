@@ -9,6 +9,27 @@ MarketMakerReportsService:
       settings-key: MarketMakerReportsService-LogsConnectionString
       types:
         - AzureTableStorage
+        
+  Rabbit:
+    AuditMessage:
+      ConnectionString:
+        settings-key: MarketMakerReportService-Rabbit-AuditMessage-ConnectionString
+        types:
+          - RabbitMq
+      Exchange:
+        settings-key: MarketMakerReportService-Rabbit-AuditMessage-Exchange
+      Queue:
+        settings-key: MarketMakerReportService-Rabbit-AuditMessage-Queue
+
+    InventorySnapshot:
+      ConnectionString:
+        settings-key: MarketMakerReportService-Rabbit-InventorySnapshot-ConnectionString
+        types:
+        - RabbitMq
+      Exchange:
+        settings-key: MarketMakerReportService-Rabbit-InventorySnapshot-Exchange
+      Queue:
+        settings-key: MarketMakerReportService-Rabbit-InventorySnapshot-Queue
 
 MonitoringServiceClient:
   MonitoringServiceUrl:

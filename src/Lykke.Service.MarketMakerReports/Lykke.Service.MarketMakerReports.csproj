@@ -22,6 +22,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="Lykke.RabbitMqBroker" Version="7.2.0" />
     <PackageReference Include="Lykke.Sdk" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />

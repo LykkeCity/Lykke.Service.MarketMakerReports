@@ -7,5 +7,7 @@ namespace Lykke.Service.MarketMakerReports.Settings.ServiceSettings
     public class MarketMakerReportsSettings
     {
         public DbSettings Db { get; set; }
+        
+        public RabbitSettings Rabbit { get; set; }
     }
 }
