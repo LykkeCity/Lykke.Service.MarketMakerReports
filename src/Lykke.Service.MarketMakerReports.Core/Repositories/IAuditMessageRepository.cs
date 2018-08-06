@@ -9,7 +9,7 @@ namespace Lykke.Service.MarketMakerReports.Core.Repositories
     {
         Task InsertAsync(AuditMessage auditMessage);
 
-        Task<IReadOnlyList<AuditMessage>> GetAsync(DateTime startDate, DateTime endDate);
+        Task<IReadOnlyList<AuditMessage>> GetAsync(DateTime? startDate, DateTime? endDate, string clientId = null);
         
         Task<IReadOnlyList<AuditMessage>> GetAllAsync();
     }

@@ -18,14 +18,51 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             _storage = storage;
         }
 
-        public async Task<IReadOnlyList<AuditMessage>> GetAsync(DateTime startDate, DateTime endDate)
+        public async Task<IReadOnlyList<AuditMessage>> GetAsync(DateTime? startDate, DateTime? endDate, string clientId = null)
         {
-            var filter = TableQuery.CombineFilters(
-                TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.GreaterThan,
-                    GetPartitionKey(startDate)),
-                TableOperators.And,
-                TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.LessThan,
-                    GetPartitionKey(endDate)));
+            string filter = null;
+            
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                filter = TableQuery.CombineFilters(
+                    TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.GreaterThan,
+                        GetPartitionKey(startDate.Value)),
+                    TableOperators.And,
+                    TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.LessThan,
+                        GetPartitionKey(endDate.Value)));
+            }
+            else
+            {
+                if (startDate.HasValue)
+                {
+                    filter = TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey),
+                        QueryComparisons.GreaterThan,
+                        GetPartitionKey(startDate.Value));
+                }
+                else if (endDate.HasValue)
+                {
+                    filter = TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey),
+                        QueryComparisons.LessThan,
+                        GetPartitionKey(endDate.Value));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(clientId))
+            {
+                if (filter == default)
+                {
+                    filter = TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.ClientId),
+                        QueryComparisons.Equal,
+                        clientId);
+                }
+                else
+                {
+                    filter = TableQuery.CombineFilters(filter,
+                        TableOperators.And,
+                        TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.ClientId), QueryComparisons.Equal,
+                            clientId));    
+                }
+            }
 
             var query = new TableQuery<AuditMessageEntity>().Where(filter);
             

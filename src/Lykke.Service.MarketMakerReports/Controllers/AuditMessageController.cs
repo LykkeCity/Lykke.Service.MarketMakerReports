@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -20,11 +21,11 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         
         /// <response code="200">Audit messages</response>
         [HttpGet]
-        [SwaggerOperation("AuditMessageGetAll")]
+        [SwaggerOperation("AuditMessageGet")]
         [ProducesResponseType(typeof(AuditMessage), (int) HttpStatusCode.OK)]
-        public async Task<IReadOnlyList<AuditMessage>> GetAll()
+        public async Task<IReadOnlyList<AuditMessage>> Get(DateTime? from, DateTime? to, string clientId = null)
         {
-            return await _auditMessageService.GetAllAsync();
+            return await _auditMessageService.GetAsync(from, to, clientId);
         }
     }
 }
