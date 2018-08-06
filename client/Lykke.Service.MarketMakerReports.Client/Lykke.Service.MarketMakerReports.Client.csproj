@@ -12,6 +12,7 @@
     <RepositoryUrl>https://github.com/LykkeCity/Lykke.Service.MarketMakerReports.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Lykke</PackageTags>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
@@ -28,7 +29,6 @@
     <PackageReference Include="Refit" Version="4.6.30" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Api" />
     <Folder Include="Models\" />
   </ItemGroup>
 </Project>
