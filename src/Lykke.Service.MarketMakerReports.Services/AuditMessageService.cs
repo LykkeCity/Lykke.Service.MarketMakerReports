@@ -28,6 +28,11 @@ namespace Lykke.Service.MarketMakerReports.Services
                 auditMessage.CreationDate = DateTime.UtcNow;
             }
 
+            if (auditMessage.Id == default)
+            {
+                auditMessage.Id = Guid.NewGuid();
+            }
+
             await _auditMessageRepository.InsertAsync(auditMessage);
         }
 

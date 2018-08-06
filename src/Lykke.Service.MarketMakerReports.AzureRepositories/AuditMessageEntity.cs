@@ -16,6 +16,9 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             PartitionKey = partitionKey;
             RowKey = rowKey;
         }
+        
+        public Guid Id { get; set; }
+        
         public string InstanceName { get; set; }
         
         public DateTime CreationDate { get; set; }

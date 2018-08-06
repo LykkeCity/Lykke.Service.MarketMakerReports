@@ -7,7 +7,7 @@ namespace Lykke.Service.MarketMakerReports
     {
         public AutoMapperProfile()
         {
-            CreateMap<AuditMessage, Core.Domain.AuditMessages.AuditMessage>();
+            CreateMap<AuditMessage, Core.Domain.AuditMessages.AuditMessage>(MemberList.Source);
         }
     }
 }
