@@ -31,8 +31,7 @@ namespace Lykke.Service.MarketMakerReports
 
             builder.RegisterType<ShutdownManager>()
                 .As<IShutdownManager>();
-            
-            
+
             RegisterRabbit(builder);
         }
 
