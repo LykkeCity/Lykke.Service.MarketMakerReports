@@ -1,4 +1,4 @@
-namespace Lykke.Service.MarketMakerReports.Client.Models
+namespace Lykke.Service.MarketMakerReports.Client.Models.AuditMessages
 {
     public enum AuditEventType
     {

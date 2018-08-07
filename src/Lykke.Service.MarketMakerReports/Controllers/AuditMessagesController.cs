@@ -4,7 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Service.MarketMakerReports.Client.Api;
-using Lykke.Service.MarketMakerReports.Client.Models;
+using Lykke.Service.MarketMakerReports.Client.Models.AuditMessages;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;

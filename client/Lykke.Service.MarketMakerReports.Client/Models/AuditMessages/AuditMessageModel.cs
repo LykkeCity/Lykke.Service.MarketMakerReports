@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Lykke.Service.MarketMakerReports.Client.Models
+namespace Lykke.Service.MarketMakerReports.Client.Models.AuditMessages
 {
     public class AuditMessageModel
     {

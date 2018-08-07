@@ -12,6 +12,10 @@ namespace Lykke.Service.MarketMakerReports.Services
             builder.RegisterType<AuditMessageService>()
                 .As<IAuditMessageService>()
                 .SingleInstance();
+
+            builder.RegisterType<InventorySnapshotService>()
+                .As<IInventorySnapshotService>()
+                .SingleInstance();
         }
     }
 }

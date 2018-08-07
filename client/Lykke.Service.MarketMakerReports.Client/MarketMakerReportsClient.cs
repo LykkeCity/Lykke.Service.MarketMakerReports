@@ -13,10 +13,13 @@ namespace Lykke.Service.MarketMakerReports.Client
         /// <summary>Api for AuditMessages</summary>
         public IAuditMessagesApi AuditMessagesApi { get; private set; }
 
+        public IInventorySnapshotsApi InventorySnapshotsApi { get; }
+
         /// <summary>C-tor</summary>
         public MarketMakerReportsClient(IHttpClientGenerator httpClientGenerator)
         {
             AuditMessagesApi = httpClientGenerator.Generate<IAuditMessagesApi>();
+            InventorySnapshotsApi = httpClientGenerator.Generate<IInventorySnapshotsApi>();
         }
     }
 }

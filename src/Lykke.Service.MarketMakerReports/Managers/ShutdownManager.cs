@@ -9,15 +9,19 @@ namespace Lykke.Service.MarketMakerReports.Managers
     public class ShutdownManager : IShutdownManager
     {
         private readonly AuditMessageSubscriber _auditMessageSubscriber;
+        private readonly InventorySnapshotSubscriber _inventorySnapshotSubscriber;
 
-        public ShutdownManager(AuditMessageSubscriber auditMessageSubscriber)
+        public ShutdownManager(AuditMessageSubscriber auditMessageSubscriber,
+            InventorySnapshotSubscriber inventorySnapshotSubscriber)
         {
             _auditMessageSubscriber = auditMessageSubscriber;
+            _inventorySnapshotSubscriber = inventorySnapshotSubscriber;
         }
         
         public Task StopAsync()
         {
             _auditMessageSubscriber.Stop();
+            _inventorySnapshotSubscriber.Stop();
             
             return Task.CompletedTask;
         }

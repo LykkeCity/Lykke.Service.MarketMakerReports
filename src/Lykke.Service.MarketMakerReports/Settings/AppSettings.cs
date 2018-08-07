@@ -8,5 +8,7 @@ namespace Lykke.Service.MarketMakerReports.Settings
     public class AppSettings : BaseAppSettings
     {
         public MarketMakerReportsSettings MarketMakerReportsService { get; set; }
+        
+        public RateCalculatorServiceClientSettings RateCalculatorServiceClient { get; set; }
     }
 }

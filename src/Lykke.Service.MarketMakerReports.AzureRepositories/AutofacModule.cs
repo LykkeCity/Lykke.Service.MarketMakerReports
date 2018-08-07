@@ -20,11 +20,18 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         protected override void Load(ContainerBuilder builder)
         {
             const string auditMessagesTableName = "AuditMessages";
+            const string inventorySnapshotsTableName = "InventorySnapshot";
             
             builder.Register(container => new AuditMessageRepository(
                     AzureTableStorage<AuditMessageEntity>.Create(_connectionString,
                         auditMessagesTableName, container.Resolve<ILogFactory>())))
                 .As<IAuditMessageRepository>()
+                .SingleInstance();
+
+            builder.Register(container => new InventorySnapshotRepository(
+                    AzureTableStorage<InventorySnapshotEntity>.Create(_connectionString,
+                        inventorySnapshotsTableName, container.Resolve<ILogFactory>())))
+                .As<IInventorySnapshotRepository>()
                 .SingleInstance();
         }
     }

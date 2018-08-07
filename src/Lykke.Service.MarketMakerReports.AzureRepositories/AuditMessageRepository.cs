@@ -25,10 +25,10 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             if (startDate.HasValue && endDate.HasValue)
             {
                 filter = TableQuery.CombineFilters(
-                    TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.GreaterThan,
+                    TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.GreaterThanOrEqual,
                         GetPartitionKey(startDate.Value)),
                     TableOperators.And,
-                    TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.LessThan,
+                    TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.LessThanOrEqual,
                         GetPartitionKey(endDate.Value)));
             }
             else
@@ -36,13 +36,13 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
                 if (startDate.HasValue)
                 {
                     filter = TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey),
-                        QueryComparisons.GreaterThan,
+                        QueryComparisons.GreaterThanOrEqual,
                         GetPartitionKey(startDate.Value));
                 }
                 else if (endDate.HasValue)
                 {
                     filter = TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey),
-                        QueryComparisons.LessThan,
+                        QueryComparisons.LessThanOrEqual,
                         GetPartitionKey(endDate.Value));
                 }
             }

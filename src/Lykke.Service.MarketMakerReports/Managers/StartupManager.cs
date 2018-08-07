@@ -9,15 +9,19 @@ namespace Lykke.Service.MarketMakerReports.Managers
     public class StartupManager : IStartupManager
     {
         private readonly AuditMessageSubscriber _auditMessageSubscriber;
+        private readonly InventorySnapshotSubscriber _inventorySnapshotSubscriber;
 
-        public StartupManager(AuditMessageSubscriber auditMessageSubscriber)
+        public StartupManager(AuditMessageSubscriber auditMessageSubscriber,
+            InventorySnapshotSubscriber inventorySnapshotSubscriber)
         {
             _auditMessageSubscriber = auditMessageSubscriber;
+            _inventorySnapshotSubscriber = inventorySnapshotSubscriber;
         }
         
         public Task StartAsync()
         {
             _auditMessageSubscriber.Start();
+            _inventorySnapshotSubscriber.Start();
             
             return Task.CompletedTask;
         }
