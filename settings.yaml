@@ -31,6 +31,10 @@ MarketMakerReportsService:
       Queue:
         settings-key: MarketMakerReportService-Rabbit-InventorySnapshot-Queue
 
+RateCalculatorServiceClient:
+  ServiceUrl:
+    settings-key: RateCalculatorServiceUrl
+
 MonitoringServiceClient:
   MonitoringServiceUrl:
     settings-key: MonitoringServiceUrl
