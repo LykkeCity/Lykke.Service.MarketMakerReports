@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using Common.Log;
+using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Lykke.RabbitMqBroker;
 using Lykke.RabbitMqBroker.Subscriber;
@@ -11,6 +12,7 @@ using Lykke.Service.NettingEngine.Client.RabbitMq;
 
 namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
 {
+    [UsedImplicitly]
     public class AuditMessageSubscriber : IDisposable
     {
         private readonly ILogFactory _logFactory;
@@ -57,7 +59,7 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
             }
             catch (Exception exception)
             {
-                _log.Error(exception, "An error occurred during processing external order book", message);
+                _log.Error(exception, "An error occurred during processing audit message", message);
             }
         }
 
