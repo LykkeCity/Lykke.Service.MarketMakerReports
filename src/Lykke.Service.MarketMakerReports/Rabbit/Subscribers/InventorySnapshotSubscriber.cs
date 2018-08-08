@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using Common.Log;
+using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Lykke.RabbitMqBroker;
 using Lykke.RabbitMqBroker.Subscriber;
@@ -11,6 +12,7 @@ using Lykke.Service.NettingEngine.Client.RabbitMq.InventorySnapshots;
 
 namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
 {
+    [UsedImplicitly]
     public class InventorySnapshotSubscriber : IDisposable
     {
         private readonly ILogFactory _logFactory;
