@@ -10,5 +10,7 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots
         public DateTime Timestamp { get; set; }
         
         public IReadOnlyList<AssetBalanceInventory> Assets { get; set; }
+        
+        public IReadOnlyList<AssetPairInventory> AssetPairInventories { get; set; }
     }
 }
