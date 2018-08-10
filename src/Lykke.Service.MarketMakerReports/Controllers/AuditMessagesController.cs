@@ -7,7 +7,6 @@ using Lykke.Service.MarketMakerReports.Client.Api;
 using Lykke.Service.MarketMakerReports.Client.Models.AuditMessages;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Lykke.Service.MarketMakerReports.Controllers
 {
@@ -23,7 +22,6 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         
         /// <response code="200">Audit messages</response>
         [HttpGet]
-        [SwaggerOperation("AuditMessageGet")]
         [ProducesResponseType(typeof(IReadOnlyList<AuditMessageModel>), (int) HttpStatusCode.OK)]
         public async Task<IReadOnlyList<AuditMessageModel>> Get(DateTime? from, DateTime? to, string clientId = null)
         {

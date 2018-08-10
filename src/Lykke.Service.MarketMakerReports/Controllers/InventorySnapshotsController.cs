@@ -7,7 +7,6 @@ using Lykke.Service.MarketMakerReports.Client.Api;
 using Lykke.Service.MarketMakerReports.Client.Models.InventorySnapshots;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Lykke.Service.MarketMakerReports.Controllers
 {
@@ -23,7 +22,6 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         
         /// <response code="200">Inventory snapshot</response>
         [HttpGet]
-        [SwaggerOperation("InventorySnapshotGet")]
         [ProducesResponseType(typeof(IReadOnlyList<InventorySnapshotModel>), (int) HttpStatusCode.OK)]
         public async Task<IReadOnlyList<InventorySnapshotModel>> Get(DateTime startDate, DateTime endDate)
         {

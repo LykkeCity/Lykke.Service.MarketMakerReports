@@ -13,9 +13,4 @@
     <PackageReference Include="Lykke.Service.NettingEngine.Client" Version="1.0.6" />
     <PackageReference Include="Lykke.Service.RateCalculator.Client" Version="1.2.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Lykke.SettingsReader, Version=1.0.43.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\.nuget\packages\lykke.settingsreader\1.0.43\lib\netstandard2.0\Lykke.SettingsReader.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 </Project>
