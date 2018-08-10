@@ -46,7 +46,7 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
                     clientId));
             }
 
-            var filter = string.Join(TableOperators.And, filters);
+            var filter = string.Join($" {TableOperators.And} ", filters);
 
             var query = new TableQuery<AuditMessageEntity>().Where(filter);
             
