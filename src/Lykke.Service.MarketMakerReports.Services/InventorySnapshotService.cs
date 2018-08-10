@@ -25,49 +25,32 @@ namespace Lykke.Service.MarketMakerReports.Services
         
         public async Task HandleAsync(InventorySnapshot model)
         {
-            FillAssetsInChildNodes(model);
+            var inventoryBalanceRecords = model.Assets
+                .SelectMany(x => x.Inventories
+                    .Select(i => new BalanceRecord(decimal.ToDouble(i.Volume), x.Asset)))
+                .ToList();
 
-            var inventories = model.Assets.SelectMany(x => x.Inventories).ToList();
-            var balances = model.Assets.SelectMany(x => x.Balances).ToList();
-            
-            IEnumerable<BalanceRecord> balanceRecords =
-                    inventories.Select(x => new BalanceRecord(decimal.ToDouble(x.Volume), x.Asset))
-                .Concat(
-                    balances.Select(x => new BalanceRecord(decimal.ToDouble(x.Amount), x.Asset)));
+            var balanceBalanceRecords = model.Assets
+                .SelectMany(x => x.Balances
+                    .Select(b => new BalanceRecord(decimal.ToDouble(b.Amount), x.Asset)))
+                .ToList();
 
-            var inUsd = (await GetInUsdAsync(balanceRecords)).ToList();
+            var inUsd = (await GetInUsdAsync(inventoryBalanceRecords.Concat(balanceBalanceRecords))).ToList();
 
-            inventories = inventories.Zip(inUsd.Take(inventories.Count), (inventory, usd) =>
-                {
-                    inventory.UsdEquivalent = (decimal) usd.Balance;
-                    return inventory;
-                }).ToList();
+            var assetInventories = model.Assets.SelectMany(x => x.Inventories).Zip(inUsd.Take(inventoryBalanceRecords.Count), (inventory, usd) =>
+            {
+                inventory.VolumeInUsd = (decimal) usd.Balance;
+                return inventory;
+            }).ToList();
 
-            balances = balances.Zip(inUsd.Skip(inventories.Count), (balance, usd) =>
-                {
-                    balance.UsdEquivalent = (decimal) usd.Balance;
-                    return balance;
-                }).ToList();
+            var assetBalances = model.Assets.SelectMany(x => x.Balances).Zip(inUsd.Skip(inventoryBalanceRecords.Count), (balance, usd) =>
+            {
+                balance.AmountInUsd = (decimal) usd.Balance;
+                return balance;
+            }).ToList();
 
             await _inventorySnapshotRepository.InsertAsync(model);
         }
-
-        private static void FillAssetsInChildNodes(InventorySnapshot model)
-        {
-            foreach (var asset in model.Assets)
-            {
-                foreach (var inventory in asset.Inventories)
-                {
-                    inventory.Asset = asset.Asset;
-                }
-
-                foreach (var balance in asset.Balances)
-                {
-                    balance.Asset = asset.Asset;
-                }
-            }
-        }
-
 
         private Task<IEnumerable<BalanceRecord>> GetInUsdAsync(IEnumerable<BalanceRecord> balanceRecords)
         {

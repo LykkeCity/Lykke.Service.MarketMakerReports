@@ -20,49 +20,33 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
 
         public async Task<IReadOnlyList<AuditMessage>> GetAsync(DateTime? startDate, DateTime? endDate, string clientId = null)
         {
-            string filter = null;
-            
-            if (startDate.HasValue && endDate.HasValue)
+            var filters = new List<string>();
+
+            if (startDate.HasValue)
             {
-                filter = TableQuery.CombineFilters(
-                    TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.GreaterThanOrEqual,
-                        GetPartitionKey(startDate.Value)),
-                    TableOperators.And,
-                    TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey), QueryComparisons.LessThanOrEqual,
-                        GetPartitionKey(endDate.Value)));
-            }
-            else
-            {
-                if (startDate.HasValue)
-                {
-                    filter = TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey),
-                        QueryComparisons.GreaterThanOrEqual,
-                        GetPartitionKey(startDate.Value));
-                }
-                else if (endDate.HasValue)
-                {
-                    filter = TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.PartitionKey),
-                        QueryComparisons.LessThanOrEqual,
-                        GetPartitionKey(endDate.Value));
-                }
+                filters.Add(TableQuery.GenerateFilterCondition(
+                    nameof(AuditMessageEntity.PartitionKey), 
+                    QueryComparisons.GreaterThanOrEqual,
+                    GetPartitionKey(startDate.Value)));
             }
 
+            if (endDate.HasValue)
+            {
+                filters.Add(TableQuery.GenerateFilterCondition(
+                    nameof(AuditMessageEntity.PartitionKey), 
+                    QueryComparisons.LessThanOrEqual,
+                    GetPartitionKey(endDate.Value)));
+            }
+            
             if (!string.IsNullOrEmpty(clientId))
             {
-                if (filter == default)
-                {
-                    filter = TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.ClientId),
-                        QueryComparisons.Equal,
-                        clientId);
-                }
-                else
-                {
-                    filter = TableQuery.CombineFilters(filter,
-                        TableOperators.And,
-                        TableQuery.GenerateFilterCondition(nameof(AuditMessageEntity.ClientId), QueryComparisons.Equal,
-                            clientId));    
-                }
+                filters.Add(TableQuery.GenerateFilterCondition(
+                    nameof(AuditMessageEntity.ClientId),
+                    QueryComparisons.Equal,
+                    clientId));
             }
+
+            var filter = string.Join(TableOperators.And, filters);
 
             var query = new TableQuery<AuditMessageEntity>().Where(filter);
             

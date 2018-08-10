@@ -1,5 +1,4 @@
 using AutoMapper;
-using Lykke.Service.MarketMakerReports.Client.Models;
 using Lykke.Service.MarketMakerReports.Client.Models.AuditMessages;
 using Lykke.Service.MarketMakerReports.Client.Models.InventorySnapshots;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
@@ -15,7 +14,7 @@ namespace Lykke.Service.MarketMakerReports
 
             CreateMap<Core.Domain.AuditMessages.AuditMessage, AuditMessageModel>(MemberList.Destination);
 
-            CreateMap<InventorySnapshot, Core.Domain.InventorySnapshots.InventorySnapshot>(MemberList.Source);
+            CreateMap<InventorySnapshot, Core.Domain.InventorySnapshots.InventorySnapshot>(MemberList.None);
 
             CreateMap<Core.Domain.InventorySnapshots.InventorySnapshot, InventorySnapshotModel>(MemberList.Destination);
         }
