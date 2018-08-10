@@ -1,4 +1,5 @@
 ﻿using Lykke.HttpClientGenerator;
+using Lykke.Service.MarketMakerReports.Client.Api;
 
 namespace Lykke.Service.MarketMakerReports.Client
 {
@@ -9,13 +10,16 @@ namespace Lykke.Service.MarketMakerReports.Client
     {
         // Note: Add similar Api properties for each new service controller
 
-        /// <summary>Inerface to MarketMakerReports Api.</summary>
-        public IMarketMakerReportsApi Api { get; private set; }
+        /// <summary>Api for AuditMessages</summary>
+        public IAuditMessagesApi AuditMessagesApi { get; private set; }
+
+        public IInventorySnapshotsApi InventorySnapshotsApi { get; }
 
         /// <summary>C-tor</summary>
         public MarketMakerReportsClient(IHttpClientGenerator httpClientGenerator)
         {
-            Api = httpClientGenerator.Generate<IMarketMakerReportsApi>();
+            AuditMessagesApi = httpClientGenerator.Generate<IAuditMessagesApi>();
+            InventorySnapshotsApi = httpClientGenerator.Generate<IInventorySnapshotsApi>();
         }
     }
 }

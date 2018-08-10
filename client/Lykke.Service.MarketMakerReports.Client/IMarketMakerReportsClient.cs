@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Lykke.Service.MarketMakerReports.Client.Api;
 
 namespace Lykke.Service.MarketMakerReports.Client
 {
@@ -8,7 +9,8 @@ namespace Lykke.Service.MarketMakerReports.Client
     [PublicAPI]
     public interface IMarketMakerReportsClient
     {
-        /// <summary>Application Api interface</summary>
-        IMarketMakerReportsApi Api { get; }
+        IAuditMessagesApi AuditMessagesApi { get; }
+        
+        IInventorySnapshotsApi InventorySnapshotsApi { get; }
     }
 }

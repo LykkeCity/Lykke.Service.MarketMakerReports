@@ -4,6 +4,7 @@ using Lykke.Service.MarketMakerReports.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using AutoMapper;
 
 namespace Lykke.Service.MarketMakerReports
 {
@@ -21,6 +22,14 @@ namespace Lykke.Service.MarketMakerReports
         {
             return services.BuildServiceProvider<AppSettings>(options =>
             {
+                Mapper.Initialize(cfg =>
+                {
+                    cfg.AddProfiles(typeof(AzureRepositories.AutoMapperProfile));
+                    cfg.AddProfiles(typeof(AutoMapperProfile));
+                });
+                
+                Mapper.AssertConfigurationIsValid();
+                
                 options.SwaggerOptions = _swaggerOptions;
 
                 options.Logs = logs =>

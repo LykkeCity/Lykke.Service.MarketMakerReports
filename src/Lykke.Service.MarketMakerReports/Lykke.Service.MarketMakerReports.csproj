@@ -22,18 +22,21 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="Lykke.RabbitMqBroker" Version="7.2.0" />
+    <PackageReference Include="Lykke.Service.RateCalculator.Client" Version="1.2.0" />
     <PackageReference Include="Lykke.Sdk" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\client\Lykke.Service.MarketMakerReports.Client\Lykke.Service.MarketMakerReports.Client.csproj" />
     <ProjectReference Include="..\Lykke.Service.MarketMakerReports.AzureRepositories\Lykke.Service.MarketMakerReports.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.Service.MarketMakerReports.Core\Lykke.Service.MarketMakerReports.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.MarketMakerReports.Services\Lykke.Service.MarketMakerReports.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Rabbit\Subscribers" />
   </ItemGroup>
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <ItemGroup>
