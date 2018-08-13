@@ -51,6 +51,16 @@ namespace Lykke.Service.MarketMakerReports
                 .AsSelf()
                 .WithParameter(TypedParameter.From(rabbitSettings.InventorySnapshot))
                 .SingleInstance();
+
+            builder.RegisterType<LykkeTradeSubscriber>()
+                .AsSelf()
+                .WithParameter(TypedParameter.From(rabbitSettings.LykkeTrade))
+                .SingleInstance();
+
+            builder.RegisterType<ExternalTradeSubscriber>()
+                .AsSelf()
+                .WithParameter(TypedParameter.From(rabbitSettings.ExternalTrade))
+                .SingleInstance();
         }
     }
 }

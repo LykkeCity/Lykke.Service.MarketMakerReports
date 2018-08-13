@@ -16,6 +16,14 @@ namespace Lykke.Service.MarketMakerReports.Services
             builder.RegisterType<InventorySnapshotService>()
                 .As<IInventorySnapshotService>()
                 .SingleInstance();
+            
+            builder.RegisterType<LykkeTradeService>()
+                .As<ILykkeTradeService>()
+                .SingleInstance();
+            
+            builder.RegisterType<ExternalTradeService>()
+                .As<IExternalTradeService>()
+                .SingleInstance();
         }
     }
 }
