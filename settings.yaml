@@ -31,6 +31,26 @@ MarketMakerReportsService:
       Queue:
         settings-key: MarketMakerReportService-Rabbit-InventorySnapshot-Queue
 
+    LykkeTrade:
+      ConnectionString:
+        settings-key: MarketMakerReportService-Rabbit-LykkeTrade-ConnectionString
+        types:
+        - RabbitMq
+      Exchange:
+        settings-key: MarketMakerReportService-Rabbit-LykkeTrade-Exchange
+      Queue:
+        settings-key: MarketMakerReportService-Rabbit-LykkeTrade-Queue
+
+    ExternalTrade:
+      ConnectionString:
+        settings-key: MarketMakerReportService-Rabbit-ExternalTrade-ConnectionString
+        types:
+        - RabbitMq
+      Exchange:
+        settings-key: MarketMakerReportService-Rabbit-ExternalTrade-Exchange
+      Queue:
+        settings-key: MarketMakerReportService-Rabbit-ExternalTrade-Queue
+
 RateCalculatorServiceClient:
   ServiceUrl:
     settings-key: RateCalculatorServiceUrl

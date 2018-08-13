@@ -12,5 +12,9 @@ namespace Lykke.Service.MarketMakerReports.Client
         IAuditMessagesApi AuditMessagesApi { get; }
         
         IInventorySnapshotsApi InventorySnapshotsApi { get; }
+        
+        ILykkeTradesApi LykkeTradesApi { get; }
+        
+        IExternalTradesApi ExternalTradesApi { get; }
     }
 }

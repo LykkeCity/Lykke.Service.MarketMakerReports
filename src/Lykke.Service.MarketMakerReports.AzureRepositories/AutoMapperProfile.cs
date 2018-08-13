@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using JetBrains.Annotations;
 using Lykke.Service.MarketMakerReports.Core.Domain.AuditMessages;
+using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
 
 namespace Lykke.Service.MarketMakerReports.AzureRepositories
 {
@@ -11,6 +12,12 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         {
             CreateMap<AuditMessage, AuditMessageEntity>(MemberList.Source);
             CreateMap<AuditMessageEntity, AuditMessage>(MemberList.Destination);
+            
+            CreateMap<LykkeTrade, LykkeTradeEntity>(MemberList.Source);
+            CreateMap<LykkeTradeEntity, LykkeTrade>(MemberList.Destination);
+            
+            CreateMap<ExternalTrade, ExternalTradeEntity>(MemberList.Source);
+            CreateMap<ExternalTradeEntity, ExternalTrade>(MemberList.Destination);
         }
     }
 }
