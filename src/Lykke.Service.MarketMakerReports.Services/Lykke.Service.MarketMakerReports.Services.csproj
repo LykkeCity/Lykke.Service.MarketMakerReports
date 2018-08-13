@@ -10,7 +10,7 @@
     <ProjectReference Include="..\Lykke.Service.MarketMakerReports.Core\Lykke.Service.MarketMakerReports.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.Service.NettingEngine.Client" Version="1.0.8" />
+    <PackageReference Include="Lykke.Service.NettingEngine.Client" Version="1.0.9" />
     <PackageReference Include="Lykke.Service.RateCalculator.Client" Version="1.2.0" />
   </ItemGroup>
 </Project>
