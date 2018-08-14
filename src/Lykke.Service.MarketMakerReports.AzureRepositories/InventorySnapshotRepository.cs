@@ -49,6 +49,29 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             return entities.Select(x => JsonConvert.DeserializeObject<InventorySnapshot>(x.Json));
         }
 
+        public async Task<InventorySnapshot> GetLastAsync()
+        {
+            // TODO: find better way to get last entry
+            
+            var endDate = DateTime.UtcNow.AddDays(1);
+            int searchWindowInHours = 1;
+            const int maxSteps = 10;
+
+            for (int i = 0; i < maxSteps; i++)
+            {
+                searchWindowInHours *= 2;
+                var startDate = DateTime.UtcNow.AddHours(-searchWindowInHours);
+                
+                var latest = (await GetAsync(startDate, endDate)).ToList();
+                if (latest.Any())
+                {
+                    return latest.OrderBy(x => x.Timestamp).Last();
+                }
+            }
+
+            return null;
+        }
+
         private static string GetPartitionKey(DateTime date) => $"{date:yyyy-MM-ddTHH:mm}";
 
         private static string GetRowKey(Guid id) => $"{id:N}";

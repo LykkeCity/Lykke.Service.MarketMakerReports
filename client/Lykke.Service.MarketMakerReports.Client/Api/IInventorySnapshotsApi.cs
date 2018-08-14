@@ -11,6 +11,9 @@ namespace Lykke.Service.MarketMakerReports.Client.Api
     public interface IInventorySnapshotsApi
     {
         [Get("/api/inventorysnapshots")]
-        Task<IReadOnlyList<InventorySnapshotModel>> Get(DateTime startDate, DateTime endDate);
+        Task<IReadOnlyList<InventorySnapshotModel>> Get(DateTime startDate, DateTime endDate, Periodicity periodicity);
+
+        [Get("/api/inventorysnapshots/last")]
+        Task<InventorySnapshotModel> GetLast();
     }
 }

@@ -10,5 +10,7 @@ namespace Lykke.Service.MarketMakerReports.Core.Repositories
         Task InsertAsync(InventorySnapshot inventorySnapshot);
 
         Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate);
+        
+        Task<InventorySnapshot> GetLastAsync();
     }
 }
