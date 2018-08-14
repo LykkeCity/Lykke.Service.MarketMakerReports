@@ -91,9 +91,21 @@ namespace Lykke.Service.MarketMakerReports.Services
             return balanceRecordsInUsd;
         }
 
-        public Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate, Periodicity periodicity)
         {
-            return _inventorySnapshotRepository.GetAsync(startDate, endDate);
+            var snapshots = await _inventorySnapshotRepository.GetAsync(startDate, endDate);
+            if (periodicity == Periodicity.OnePerDay)
+            {
+                snapshots = snapshots.GroupBy(x => x.Timestamp.ToString("yyyy-MM-dd"))
+                    .Select(x => x.First());
+            }
+
+            return snapshots;
+        }
+
+        public Task<InventorySnapshot> GetLastAsync()
+        {
+            return _inventorySnapshotRepository.GetLastAsync();
         }
     }
 }
