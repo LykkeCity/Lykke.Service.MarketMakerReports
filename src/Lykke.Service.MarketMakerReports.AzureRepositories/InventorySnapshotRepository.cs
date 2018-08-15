@@ -49,6 +49,16 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             return entities.Select(x => JsonConvert.DeserializeObject<InventorySnapshot>(x.Json));
         }
 
+        public async Task<InventorySnapshot> GetAsync(DateTime dateTime)
+        {
+            var startDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
+            var endDate = startDate.AddDays(1);
+
+            var snapshots = await GetAsync(startDate, endDate);
+
+            return snapshots.FirstOrDefault();
+        }
+
         private static string GetPartitionKey(DateTime date) => $"{date:yyyy-MM-ddTHH:mm}";
 
         private static string GetRowKey(Guid id) => $"{id:N}";

@@ -12,5 +12,7 @@ namespace Lykke.Service.MarketMakerReports.Client
         IAuditMessagesApi AuditMessagesApi { get; }
         
         IInventorySnapshotsApi InventorySnapshotsApi { get; }
+        
+        IPnLApi PnLApi { get; }
     }
 }

@@ -61,5 +61,10 @@ namespace Lykke.Service.MarketMakerReports.Services
         {
             return _inventorySnapshotRepository.GetAsync(startDate, endDate);
         }
+
+        public Task<InventorySnapshot> GetAsync(DateTime dateTime)
+        {
+            return _inventorySnapshotRepository.GetAsync(dateTime);
+        }
     }
 }
