@@ -20,5 +20,13 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.Trades
         public decimal Price { get; set; }
 
         public decimal Volume { get; set; }
+
+        public decimal OriginalPrice { get; set; }
+
+        public decimal OriginalVolume { get; set; }
+
+        public decimal Commission { get; set; }
+
+        public decimal ExchangeExecuteVolume { get; set; }
     }
 }
