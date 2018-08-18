@@ -29,5 +29,27 @@ namespace Lykke.Service.MarketMakerReports.Controllers
 
             return model;
         }
+
+        [HttpGet("currentday")]
+        [ProducesResponseType(typeof(PnLResultModel), (int)HttpStatusCode.OK)]
+        public async Task<PnLResultModel> CalcForCurrentDay()
+        {
+            var result = await _pnLService.CalculateCurrentDayPnLAsync();
+
+            var model = Mapper.Map<PnLResultModel>(result);
+
+            return model;
+        }
+
+        [HttpGet("currentmonth")]
+        [ProducesResponseType(typeof(PnLResultModel), (int)HttpStatusCode.OK)]
+        public async Task<PnLResultModel> CalcForCurrentMonth()
+        {
+            var result = await _pnLService.CalculateCurrentMonthPnLAsync();
+
+            var model = Mapper.Map<PnLResultModel>(result);
+
+            return model;
+        }
     }
 }

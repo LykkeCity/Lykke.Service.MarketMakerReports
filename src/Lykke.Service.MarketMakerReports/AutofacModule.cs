@@ -37,7 +37,7 @@ namespace Lykke.Service.MarketMakerReports
             RegisterRabbit(builder);
             
             builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
-            builder.RegisterMarketMakerReportsClient(_appSettings.CurrentValue.NettingEngineServiceClient, null);
+            builder.RegisterNettingEngineClient(_appSettings.CurrentValue.NettingEngineServiceClient, null);
         }
 
         private void RegisterRabbit(ContainerBuilder builder)

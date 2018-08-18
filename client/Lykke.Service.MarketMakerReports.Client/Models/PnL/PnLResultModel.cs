@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
 {
     public class PnLResultModel
@@ -7,5 +10,11 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
         public decimal Directional { get; set; }
 
         public decimal Total { get; set; }
+        
+        public DateTime StartDate { get; set; }
+        
+        public DateTime EndDate { get; set; }
+        
+        public IReadOnlyList<AssetPnLModel> AssetsPnLs { get; set; }
     }
 }

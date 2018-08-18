@@ -11,5 +11,11 @@ namespace Lykke.Service.MarketMakerReports.Client.Api
     {
         [Get("/api/pnl")]
         Task<PnLResultModel> Calc(DateTime startDate, DateTime endDate);
+
+        [Get("/api/pnl/currentday")]
+        Task<PnLResultModel> CalcForCurrentDay();
+
+        [Get("/api/pnl/currentmonth")]
+        Task<PnLResultModel> CalcForCurrentMonth();
     }
 }

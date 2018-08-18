@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
+using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 using Lykke.Service.MarketMakerReports.Core.Exceptions;
@@ -14,84 +17,99 @@ namespace Lykke.Service.MarketMakerReports.Services
     {
         private readonly IInventorySnapshotService _inventorySnapshotService;
         private readonly INettingEngineServiceClient _nettingEngineServiceClient;
+        private readonly ILog _log;
 
         private const string LykkeExchangeName = "lykke";
 
-        public PnLService(IInventorySnapshotService inventorySnapshotService,
+        public PnLService(
+            ILogFactory logFactory,
+            IInventorySnapshotService inventorySnapshotService,
             INettingEngineServiceClient nettingEngineServiceClient)
         {
+            _log = logFactory.CreateLog(this);
             _inventorySnapshotService = inventorySnapshotService;
             _nettingEngineServiceClient = nettingEngineServiceClient;
         }
 
         public async Task<PnLResult> CalculatePnLAsync(DateTime startDate, DateTime endDate)
         {
-            var startSnapshot = await GetInventorySnapshot(startDate) 
-                                ?? throw new InvalidPnLCalculationException("No InventorySnapshot for startDate");
+            var snapshots = await _inventorySnapshotService.GetStartEndSnapshotsAsync(startDate, endDate);
             
-            var endSnapshot = await GetInventorySnapshot(endDate) 
-                              ?? throw new InvalidPnLCalculationException("No InventorySnapshot for startDate");
+            if (snapshots.Start == null)
+            {
+                throw new InvalidPnLCalculationException("No InventorySnapshot for startDate");
+            }
+
+            if (snapshots.End == null)
+            {
+                throw new InvalidPnLCalculationException("No InventorySnapshot for endDate");
+            }
 
             var depositChanges = await GetChangeDepositOperations(startDate, endDate);
 
-            var pnLs = startSnapshot.Assets.Join(endSnapshot.Assets, x => x.Asset, x => x.Asset,
-                (start, end) => CalcPnLForAsset(start.Asset, start, end, 
-                    depositChanges.SingleOrDefault(d => string.Equals(d.asset, start.Asset, StringComparison.InvariantCultureIgnoreCase)).depositChanges));
+            var pnLs = snapshots.Start.Assets
+                .Join(snapshots.End.Assets, x => x.Asset, x => x.Asset,
+                (start, end) => CalcPnLForAsset(
+                    start.Asset, start, end, depositChanges.ContainsKey(start.Asset) ? depositChanges[start.Asset] : 0))
+                .Where(x => !x.IsEmpty())
+                .ToList();
 
-            var (adjusted, directional) = SumByColumns(pnLs.Select(x => (x.adjustedPnL, x.directionalPnL)));
-
-            return new PnLResult(adjusted, directional);
+            return new PnLResult
+                {
+                    Adjusted = pnLs.Sum(x => x.Adjusted),
+                    Directional = pnLs.Sum(x => x.Directional),
+                    StartDate = snapshots.Start.Timestamp,
+                    EndDate = snapshots.End.Timestamp,
+                    AssetsPnLs = pnLs
+                };
         }
 
-        private async Task<IEnumerable<(string asset, decimal depositChanges)>> GetChangeDepositOperations(DateTime startDate, DateTime endDate)
+        public Task<PnLResult> CalculateCurrentDayPnLAsync()
         {
-            var operations = await _nettingEngineServiceClient.ChangeDepositOperationApi.GetAsync(startDate, endDate, LykkeExchangeName,
-                null);
-
-            return operations.GroupBy(x => x.AssetId).Select(x => (asset: x.Key, depositChanges: x.Sum(o => o.Amount)));
+            var now = DateTime.UtcNow;
+            return CalculatePnLAsync(now.Date, now);
         }
-        
-        private (decimal, decimal) SumByColumns(IEnumerable<(decimal, decimal)> enumerable)
+
+        public Task<PnLResult> CalculateCurrentMonthPnLAsync()
         {
-            var sum1 = 0m;
-            var sum2 = 0m;
-            
-            foreach (var tuple in enumerable)
+            var now = DateTime.UtcNow;
+            return CalculatePnLAsync(now.RoundToMonth(), now);
+        }
+
+        private async Task<IDictionary<string, decimal>> GetChangeDepositOperations(DateTime startDate, DateTime endDate)
+        {
+            var operations = await _nettingEngineServiceClient.ChangeDepositOperationApi
+                .GetSumsAsync(startDate, endDate, LykkeExchangeName, null);
+
+            if (operations == null)
             {
-                sum1 += tuple.Item1;
-                sum2 += tuple.Item2;
+                throw new InvalidPnLCalculationException("NettingEngine returned null for ChangeDepositOperations");
             }
 
-            return (sum1, sum2);
+            return operations.ToDictionary(x => x.AssetId, x => x.SumOfAllOperations);
         }
 
-        private Task<InventorySnapshot> GetInventorySnapshot(DateTime dateTime)
-        {
-            return _inventorySnapshotService.GetAsync(dateTime);
-        }
-
-        private (string asset, decimal adjustedPnL, decimal directionalPnL) CalcPnLForAsset(string asset,
-            AssetBalanceInventory start, AssetBalanceInventory end,
+        private AssetPnL CalcPnLForAsset(string asset,
+            AssetBalanceInventory start, 
+            AssetBalanceInventory end,
             decimal depositChanges)
         {
-            var startBalanceAndPrice = GetBalanceAndPriceOnLykke(start);
-            var endBalanceAndPrice = GetBalanceAndPriceOnLykke(end);
+            var startAssetBalance = new BalanceOnDate(start.GetBalanceForExchange(LykkeExchangeName));
+            var endAssetBalance = new BalanceOnDate(end.GetBalanceForExchange(LykkeExchangeName));
 
-            var inventory = endBalanceAndPrice.balanceOnLykke - startBalanceAndPrice.balanceOnLykke;
-            var adjustedPnL = endBalanceAndPrice.priceInUsd * (inventory - depositChanges);
-            var directionalPnL = startBalanceAndPrice.balanceOnLykke * (endBalanceAndPrice.priceInUsd - startBalanceAndPrice.priceInUsd);
+            var inventory = endAssetBalance.Balance - startAssetBalance.Balance;
+            var adjustedPnL = endAssetBalance.Price * (inventory - depositChanges);
+            var directionalPnL = startAssetBalance.Balance * (endAssetBalance.Price - startAssetBalance.Price);
 
-            return (asset, adjustedPnL, directionalPnL);
-        }
-
-        private (decimal balanceOnLykke, decimal priceInUsd) GetBalanceAndPriceOnLykke(
-            AssetBalanceInventory assetBalanceInventory)
-        {
-            var balance = assetBalanceInventory.Balances.SingleOrDefault(x =>
-                string.Equals(x.Exchange, LykkeExchangeName, StringComparison.InvariantCultureIgnoreCase));
-
-            return balance == null ? (0, 0) : 
-                (balance.Amount, balance.AmountInUsd != 0 ? balance.Amount / balance.AmountInUsd : 0);
+            return new AssetPnL
+                {
+                    Asset = asset,
+                    Adjusted = adjustedPnL,
+                    Directional = directionalPnL,
+                    StartBalance = startAssetBalance,
+                    EndBalance = endAssetBalance,
+                    SumOfChangeDepositOperations = depositChanges
+                };
         }
     }
 }
