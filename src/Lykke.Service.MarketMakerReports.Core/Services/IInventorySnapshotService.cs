@@ -9,6 +9,8 @@ namespace Lykke.Service.MarketMakerReports.Core.Services
     {
         Task HandleAsync(InventorySnapshot model);
         
+        Task<(InventorySnapshot Start, InventorySnapshot End)> GetStartEndSnapshotsAsync(DateTime startDate, DateTime endDate);
+        
         Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate, Periodicity periodicity = Periodicity.All);
         
         Task<InventorySnapshot> GetLastAsync();

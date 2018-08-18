@@ -24,6 +24,10 @@ namespace Lykke.Service.MarketMakerReports.Services
             builder.RegisterType<ExternalTradeService>()
                 .As<IExternalTradeService>()
                 .SingleInstance();
+
+            builder.RegisterType<PnLService>()
+                .As<IPnLService>()
+                .SingleInstance();
         }
     }
 }

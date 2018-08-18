@@ -1,6 +1,8 @@
 using AutoMapper;
 using Lykke.Service.MarketMakerReports.Client.Models.AuditMessages;
 using Lykke.Service.MarketMakerReports.Client.Models.InventorySnapshots;
+using Lykke.Service.MarketMakerReports.Client.Models.PnL;
+using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
 using Lykke.Service.NettingEngine.Client.RabbitMq.InventorySnapshots;
 
@@ -17,6 +19,16 @@ namespace Lykke.Service.MarketMakerReports
             CreateMap<InventorySnapshot, Core.Domain.InventorySnapshots.InventorySnapshot>(MemberList.None);
 
             CreateMap<Core.Domain.InventorySnapshots.InventorySnapshot, InventorySnapshotModel>(MemberList.Destination);
+
+            CreateMap<PnLResult, PnLResultModel>(MemberList.Destination);
+
+            CreateMap<AssetPnL, AssetPnLModel>()
+                .ForMember(x => x.StartBalance, m => m.MapFrom(x => x.StartBalance.Balance))
+                .ForMember(x => x.StartBalanceInUsd, m => m.MapFrom(x => x.StartBalance.BalanceInUsd))
+                .ForMember(x => x.StartPrice, m => m.MapFrom(x => x.StartBalance.Price))
+                .ForMember(x => x.EndBalance, m => m.MapFrom(x => x.EndBalance.Balance))
+                .ForMember(x => x.EndBalanceInUsd, m => m.MapFrom(x => x.EndBalance.BalanceInUsd))
+                .ForMember(x => x.EndPrice, m => m.MapFrom(x => x.EndBalance.Price));
         }
     }
 }

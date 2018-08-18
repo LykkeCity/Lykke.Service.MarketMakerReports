@@ -18,6 +18,8 @@ namespace Lykke.Service.MarketMakerReports.Client
         public ILykkeTradesApi LykkeTradesApi { get; }
         
         public IExternalTradesApi ExternalTradesApi { get; }
+        
+        public IPnLApi PnLApi { get; }
 
         /// <summary>C-tor</summary>
         public MarketMakerReportsClient(IHttpClientGenerator httpClientGenerator)
@@ -26,6 +28,7 @@ namespace Lykke.Service.MarketMakerReports.Client
             InventorySnapshotsApi = httpClientGenerator.Generate<IInventorySnapshotsApi>();
             LykkeTradesApi = httpClientGenerator.Generate<ILykkeTradesApi>();
             ExternalTradesApi = httpClientGenerator.Generate<IExternalTradesApi>();
+            PnLApi = httpClientGenerator.Generate<IPnLApi>();
         }
     }
 }
