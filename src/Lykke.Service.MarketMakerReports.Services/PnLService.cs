@@ -37,20 +37,22 @@ namespace Lykke.Service.MarketMakerReports.Services
             
             if (snapshots.Start == null)
             {
-                throw new InvalidPnLCalculationException("No InventorySnapshot for startDate");
+                throw new InvalidPnLCalculationException($"No InventorySnapshot for startDate {startDate}");
             }
 
             if (snapshots.End == null)
             {
-                throw new InvalidPnLCalculationException("No InventorySnapshot for endDate");
+                throw new InvalidPnLCalculationException($"No InventorySnapshot for endDate {endDate}");
             }
 
             var depositChanges = await GetChangeDepositOperations(startDate, endDate);
 
-            var pnLs = snapshots.Start.Assets
-                .Join(snapshots.End.Assets, x => x.Asset, x => x.Asset,
-                (start, end) => CalcPnLForAsset(
-                    start.Asset, start, end, depositChanges.ContainsKey(start.Asset) ? depositChanges[start.Asset] : 0))
+            
+            // get all assets from Start snapshot, all assets from End snapshot, join them to 
+            // pairs (startSnapshot, endSnapshot) per asset and calculate PnL for every asset.
+            var pnLs = snapshots.Start.Assets.Join(snapshots.End.Assets, 
+                    x => x.Asset, x => x.Asset,
+                    (start, end) => CalcPnLForAsset(start.Asset, start, end, depositChanges.ContainsKey(start.Asset) ? depositChanges[start.Asset] : 0))
                 .Where(x => !x.IsEmpty())
                 .ToList();
 

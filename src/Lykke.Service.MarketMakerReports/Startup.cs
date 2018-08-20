@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using AutoMapper;
+using Lykke.Common.Api.Contract.Responses;
 
 namespace Lykke.Service.MarketMakerReports
 {
@@ -46,7 +47,11 @@ namespace Lykke.Service.MarketMakerReports
         [UsedImplicitly]
         public void Configure(IApplicationBuilder app)
         {
-            app.UseLykkeConfiguration(options => { options.SwaggerOptions = _swaggerOptions; });
+            app.UseLykkeConfiguration(options =>
+            {
+                options.SwaggerOptions = _swaggerOptions;
+                options.DefaultErrorHandler = exception => ErrorResponse.Create(exception.Message);
+            });
         }
     }
 }
