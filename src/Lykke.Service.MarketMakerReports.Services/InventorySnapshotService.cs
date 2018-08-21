@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common;
+using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots;
 using Lykke.Service.MarketMakerReports.Core.Repositories;
 using Lykke.Service.MarketMakerReports.Core.Services;
@@ -14,47 +17,78 @@ namespace Lykke.Service.MarketMakerReports.Services
     {
         private readonly IInventorySnapshotRepository _inventorySnapshotRepository;
         private readonly IRateCalculatorClient _rateCalculatorClient;
+        private readonly ILog _log;
         private const string Usd = "USD";
 
-        public InventorySnapshotService(IInventorySnapshotRepository inventorySnapshotRepository,
+        public InventorySnapshotService(
+            ILogFactory logFactory,
+            IInventorySnapshotRepository inventorySnapshotRepository,
             IRateCalculatorClient rateCalculatorClient)
         {
+            _log = logFactory.CreateLog(this);
             _inventorySnapshotRepository = inventorySnapshotRepository;
             _rateCalculatorClient = rateCalculatorClient;
         }
         
         public async Task HandleAsync(InventorySnapshot model)
         {
-            var inventoryBalanceRecords = model.Assets
-                .SelectMany(x => x.Inventories
-                    .Select(i => new BalanceRecord(decimal.ToDouble(i.Volume), x.Asset)))
-                .ToList();
-
-            var balanceBalanceRecords = model.Assets
-                .SelectMany(x => x.Balances
-                    .Select(b => new BalanceRecord(decimal.ToDouble(b.Amount), x.Asset)))
-                .ToList();
-
-            var inUsd = (await GetInUsdAsync(inventoryBalanceRecords.Concat(balanceBalanceRecords))).ToList();
-
-            var assetInventories = model.Assets.SelectMany(x => x.Inventories).Zip(inUsd.Take(inventoryBalanceRecords.Count), (inventory, usd) =>
+            try
             {
-                inventory.VolumeInUsd = (decimal) usd.Balance;
-                return inventory;
-            }).ToList();
-
-            var assetBalances = model.Assets.SelectMany(x => x.Balances).Zip(inUsd.Skip(inventoryBalanceRecords.Count), (balance, usd) =>
+                await FillUsdForInventories(model);
+                await FillUsdForBalances(model);
+            }
+            catch (Exception e)
             {
-                balance.AmountInUsd = (decimal) usd.Balance;
-                return balance;
-            }).ToList();
+                _log.Error(e, context: $"Snapshot: {model.ToJson()}");
+            }
 
             await _inventorySnapshotRepository.InsertAsync(model);
         }
 
-        private Task<IEnumerable<BalanceRecord>> GetInUsdAsync(IEnumerable<BalanceRecord> balanceRecords)
+        private async Task FillUsdForInventories(InventorySnapshot inventorySnapshot)
         {
-            return _rateCalculatorClient.GetAmountInBaseAsync(balanceRecords, Usd);
+            var balanceRecords = inventorySnapshot.Assets
+                .SelectMany(x => x.Inventories.Select(i => new BalanceRecord(decimal.ToDouble(i.Volume), x.Asset)))
+                .ToList();
+
+            var balanceRecordsInUsd = await GetInUsdAsync(balanceRecords);
+
+            var flatListOfInventories = inventorySnapshot.Assets.SelectMany(x => x.Inventories).ToList();
+            
+            for (int i = 0; i < balanceRecords.Count; i++)
+            {
+                flatListOfInventories[i].VolumeInUsd = (decimal) balanceRecordsInUsd[i].Balance;
+            }
+        }
+
+        private async Task FillUsdForBalances(InventorySnapshot inventorySnapshot)
+        {
+            var balanceRecords = inventorySnapshot.Assets
+                .SelectMany(x => x.Balances.Select(b => new BalanceRecord(decimal.ToDouble(b.Amount), x.Asset)))
+                .ToList();
+
+            var balanceRecordsInUsd = await GetInUsdAsync(balanceRecords);
+
+            var flatListOfBalances = inventorySnapshot.Assets.SelectMany(x => x.Balances).ToList();
+            
+            for (int i = 0; i < balanceRecords.Count; i++)
+            {
+                flatListOfBalances[i].AmountInUsd = (decimal) balanceRecordsInUsd[i].Balance;
+            }
+        }
+
+        private async Task<IReadOnlyList<BalanceRecord>> GetInUsdAsync(ICollection<BalanceRecord> balanceRecords)
+        {
+            var balanceRecordsInUsd = (await _rateCalculatorClient.GetAmountInBaseAsync(balanceRecords, Usd)).ToList();
+            
+            if (balanceRecords.Count != balanceRecordsInUsd.Count)
+            {
+                throw new InvalidOperationException("Wrong number of USD balances is returned. " +
+                                                    $"Balance records in request: {balanceRecords.Count}, " +
+                                                    $"balance records in response: {balanceRecordsInUsd.Count}");
+            }
+
+            return balanceRecordsInUsd;
         }
 
         public Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate)
