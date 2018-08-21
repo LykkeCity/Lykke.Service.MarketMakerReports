@@ -35,9 +35,42 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             _indexStorage = indexStorage;
         }
 
-        public async Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate,
+            Periodicity periodicity)
         {
             var entities = await GetEntitiesAsync(startDate, endDate);
+            
+            if (periodicity == Periodicity.OnePerDay)
+            {
+                entities = entities.GroupBy(x => x.Timestamp.ToString("yyyy-MM-dd"))
+                    .Select(x => x.First());
+            }
+            else if (periodicity == Periodicity.OnePerHour)
+            {
+                entities = entities.GroupBy(x => x.Timestamp.ToString("yyyy-MM-ddTHH"))
+                    .Select(x => x.First());
+            }
+            else if (periodicity == Periodicity.OnePerTwoDays)
+            {
+                var result = new List<InventorySnapshotEntity>();
+                var entitiesList = entities.ToList();
+
+                for (int i = 0; i < (endDate - startDate).Days; i += 2)
+                {
+                    var startOfTwoDaysInterval = startDate.AddDays(i);
+                    var endOfTwoDaysInterval = startOfTwoDaysInterval.AddDays(1);
+
+                    var entity = entitiesList
+                        .FirstOrDefault(x => x.Timestamp >= startOfTwoDaysInterval && x.Timestamp <= endOfTwoDaysInterval);
+
+                    if (entity != null)
+                    {
+                        result.Add(entity);    
+                    }
+                }
+                
+                entities = result;
+            }
 
             return entities.Select(x => JsonConvert.DeserializeObject<InventorySnapshot>(x.Json));
         }

@@ -57,16 +57,9 @@ namespace Lykke.Service.MarketMakerReports.Services
             return _rateCalculatorClient.GetAmountInBaseAsync(balanceRecords, Usd);
         }
 
-        public async Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate, Periodicity periodicity)
+        public Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate, Periodicity periodicity)
         {
-            var snapshots = await _inventorySnapshotRepository.GetAsync(startDate, endDate);
-            if (periodicity == Periodicity.OnePerDay)
-            {
-                snapshots = snapshots.GroupBy(x => x.Timestamp.ToString("yyyy-MM-dd"))
-                    .Select(x => x.First());
-            }
-
-            return snapshots;
+            return _inventorySnapshotRepository.GetAsync(startDate, endDate, periodicity);
         }
 
         public Task<InventorySnapshot> GetLastAsync()

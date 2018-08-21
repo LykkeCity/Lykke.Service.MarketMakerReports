@@ -4,6 +4,10 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots
     {
         All,
         
-        OnePerDay
+        OnePerHour,
+        
+        OnePerDay,
+        
+        OnePerTwoDays
     }
 }

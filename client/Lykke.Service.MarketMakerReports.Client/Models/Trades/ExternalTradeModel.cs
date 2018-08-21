@@ -12,9 +12,9 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.Trades
 
         public string AssetPairId { get; set; }
 
+        [JsonConverter(typeof (StringEnumConverter))]
         public TradeType Type { get; set; }
 
-        [JsonConverter(typeof (StringEnumConverter))]
         public DateTime Time { get; set; }
 
         public decimal Price { get; set; }
