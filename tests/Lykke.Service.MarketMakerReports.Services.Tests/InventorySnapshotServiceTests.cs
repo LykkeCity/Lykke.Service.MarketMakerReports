@@ -7,6 +7,7 @@ using Lykke.Service.RateCalculator.Client.AutorestClient.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json;
+using Lykke.Common.Log;
 
 namespace Lykke.Service.MarketMakerReports.Services.Tests
 {
@@ -177,7 +178,10 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests
                 .ReturnsAsync((IEnumerable<BalanceRecord> balances, string currency) => 
                     balances.Select(x => new BalanceRecord(x.Balance, currency)));
             
-            var service = new InventorySnapshotService(repositoryMock.Object, rateCalculatorClientMock.Object);
+            var service = new InventorySnapshotService(
+                Mock.Of<ILogFactory>(),
+                repositoryMock.Object, 
+                rateCalculatorClientMock.Object);
 
             var snapshot = (InventorySnapshot)JsonConvert.DeserializeObject(_snapshot, typeof(InventorySnapshot));
             
