@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using AzureStorage.Tables;
+using AzureStorage.Tables.Templates.Index;
 using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Lykke.Service.MarketMakerReports.Core.Repositories;
@@ -34,7 +35,7 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             builder.Register(container => new InventorySnapshotRepository(
                     AzureTableStorage<InventorySnapshotEntity>.Create(_connectionString,
                         inventorySnapshotsTableName, container.Resolve<ILogFactory>()),
-                    AzureTableStorage<InventorySnapshotIndexEntity>.Create(_connectionString,
+                    AzureTableStorage<AzureIndex>.Create(_connectionString,
                         inventorySnapshotsIndexTableName, container.Resolve<ILogFactory>())))
                 .As<IInventorySnapshotRepository>()
                 .SingleInstance();

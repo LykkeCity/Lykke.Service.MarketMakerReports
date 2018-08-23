@@ -97,8 +97,8 @@ namespace Lykke.Service.MarketMakerReports.Services
             AssetBalanceInventory end,
             decimal depositChanges)
         {
-            var startAssetBalance = new BalanceOnDate(start.GetBalanceForExchange(LykkeExchangeName));
-            var endAssetBalance = new BalanceOnDate(end.GetBalanceForExchange(LykkeExchangeName));
+            var startAssetBalance = new BalanceOnDate(start.GetBalanceByExchange(LykkeExchangeName));
+            var endAssetBalance = new BalanceOnDate(end.GetBalanceByExchange(LykkeExchangeName));
 
             var inventory = endAssetBalance.Balance - startAssetBalance.Balance;
             var adjustedPnL = endAssetBalance.Price * (inventory - depositChanges);
