@@ -48,7 +48,7 @@ namespace Lykke.Service.MarketMakerReports.Services
         private async Task FillUsdForInventories(InventorySnapshot inventorySnapshot)
         {
             var balanceRecords = inventorySnapshot.Assets
-                .SelectMany(x => x.Inventories.Select(i => new BalanceRecord(decimal.ToDouble(i.Volume), x.Asset)))
+                .SelectMany(x => x.Inventories.Select(i => new BalanceRecord(decimal.ToDouble(i.Volume), x.AssetId)))
                 .ToList();
 
             var balanceRecordsInUsd = await GetInUsdAsync(balanceRecords);
@@ -64,7 +64,7 @@ namespace Lykke.Service.MarketMakerReports.Services
         private async Task FillUsdForBalances(InventorySnapshot inventorySnapshot)
         {
             var balanceRecords = inventorySnapshot.Assets
-                .SelectMany(x => x.Balances.Select(b => new BalanceRecord(decimal.ToDouble(b.Amount), x.Asset)))
+                .SelectMany(x => x.Balances.Select(b => new BalanceRecord(decimal.ToDouble(b.Amount), x.AssetId)))
                 .ToList();
 
             var balanceRecordsInUsd = await GetInUsdAsync(balanceRecords);
