@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots
 {
     public class AssetBalanceInventory
     {
+        [JsonProperty("Asset")]
         public string AssetId { get; set; }
         
         public string AssetDisplayId { get; set; }
