@@ -51,8 +51,8 @@ namespace Lykke.Service.MarketMakerReports.Services
             // get all assets from Start snapshot, all assets from End snapshot, join them to 
             // pairs (startSnapshot, endSnapshot) per asset and calculate PnL for every asset.
             var pnLs = snapshots.Start.Assets.Join(snapshots.End.Assets, 
-                    x => x.Asset, x => x.Asset,
-                    (start, end) => CalcPnLForAsset(start.Asset, start, end, depositChanges.ContainsKey(start.Asset) ? depositChanges[start.Asset] : 0))
+                    x => x.AssetId, x => x.AssetId,
+                    (start, end) => CalcPnLForAsset(start.AssetDisplayId, start, end, depositChanges.ContainsKey(start.AssetId) ? depositChanges[start.AssetId] : 0))
                 .Where(x => !x.IsEmpty())
                 .ToList();
 
