@@ -24,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="Lykke.RabbitMqBroker" Version="7.3.0" />
-    <PackageReference Include="Lykke.Service.NettingEngine.Client" Version="1.0.17" />
+    <PackageReference Include="Lykke.Service.NettingEngine.Client" Version="1.0.20" />
     <PackageReference Include="Lykke.Service.RateCalculator.Client" Version="1.2.0" />
     <PackageReference Include="Lykke.Sdk" Version="5.2.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />
