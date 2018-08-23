@@ -21,7 +21,7 @@ namespace Lykke.Service.MarketMakerReports
             CreateMap<Core.Domain.InventorySnapshots.InventorySnapshot, InventorySnapshotModel>(MemberList.Destination);
 
             CreateMap<Core.Domain.InventorySnapshots.AssetBalanceInventory, AssetBalanceInventoryModel>()
-                .ForMember(x => x.Asset, m => m.ResolveUsing(x => x.AssetDisplayId));
+                .ForMember(x => x.Asset, m => m.ResolveUsing(x => x.AssetDisplayId ?? x.AssetId));
 
             CreateMap<PnLResult, PnLResultModel>(MemberList.Destination);
 
