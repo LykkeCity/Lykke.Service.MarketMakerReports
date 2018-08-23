@@ -16,7 +16,7 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots
         
         public IReadOnlyList<AssetBalance> Balances { get; set; }
 
-        public AssetBalance GetBalanceForExchange(string exchange)
+        public AssetBalance GetBalanceByExchange(string exchange)
         {
             return Balances.SingleOrDefault(x => string.Equals(x.Exchange, exchange, StringComparison.InvariantCultureIgnoreCase)) 
                    ?? new AssetBalance

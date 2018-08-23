@@ -21,9 +21,9 @@ namespace Lykke.Service.MarketMakerReports.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(PnLResultModel), (int)HttpStatusCode.OK)]
-        public async Task<PnLResultModel> Calc(DateTime startDate, DateTime endDate)
+        public async Task<PnLResultModel> GetAsync(DateTime startDate, DateTime endDate)
         {
-            var result = await _pnLService.CalculatePnLAsync(startDate, endDate);
+            var result = await _pnLService.GetPnLAsync(startDate, endDate);
 
             var model = Mapper.Map<PnLResultModel>(result);
 
@@ -32,9 +32,9 @@ namespace Lykke.Service.MarketMakerReports.Controllers
 
         [HttpGet("currentday")]
         [ProducesResponseType(typeof(PnLResultModel), (int)HttpStatusCode.OK)]
-        public async Task<PnLResultModel> CalcForCurrentDay()
+        public async Task<PnLResultModel> GetForCurrentDayAsync()
         {
-            var result = await _pnLService.CalculateCurrentDayPnLAsync();
+            var result = await _pnLService.GetCurrentDayPnLAsync();
 
             var model = Mapper.Map<PnLResultModel>(result);
 
@@ -43,9 +43,9 @@ namespace Lykke.Service.MarketMakerReports.Controllers
 
         [HttpGet("currentmonth")]
         [ProducesResponseType(typeof(PnLResultModel), (int)HttpStatusCode.OK)]
-        public async Task<PnLResultModel> CalcForCurrentMonth()
+        public async Task<PnLResultModel> GetForCurrentMonthAsync()
         {
-            var result = await _pnLService.CalculateCurrentMonthPnLAsync();
+            var result = await _pnLService.GetCurrentMonthPnLAsync();
 
             var model = Mapper.Map<PnLResultModel>(result);
 

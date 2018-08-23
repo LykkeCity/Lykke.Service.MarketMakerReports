@@ -15,6 +15,8 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             RowKey = rowKey;
         }
         
+        public DateTime Time { get; set; }
+        
         public string Json { get; set; }
     }
 }

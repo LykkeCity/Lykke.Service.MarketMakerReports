@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AzureStorage;
+using AzureStorage.Tables.Templates.Index;
 using Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots;
 using Lykke.Service.MarketMakerReports.Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -26,10 +27,10 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         /// PartitionKey | RowKey | ReferencePartitionKey | ReferenceRowKey
         ///  2018-08-01  |  last  |   2018-08-01T20:00    | {id of the entry}
         /// </summary>
-        private readonly INoSQLTableStorage<InventorySnapshotIndexEntity> _indexStorage;
+        private readonly INoSQLTableStorage<AzureIndex> _indexStorage;
 
         public InventorySnapshotRepository(INoSQLTableStorage<InventorySnapshotEntity> storage,
-            INoSQLTableStorage<InventorySnapshotIndexEntity> indexStorage)
+            INoSQLTableStorage<AzureIndex> indexStorage)
         {
             _storage = storage;
             _indexStorage = indexStorage;
@@ -74,6 +75,49 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
 
             return entities.Select(x => JsonConvert.DeserializeObject<InventorySnapshot>(x.Json));
         }
+        
+        public async Task InsertAsync(InventorySnapshot inventorySnapshot)
+        {
+            Guid id = Guid.NewGuid();
+            
+            var entity = new InventorySnapshotEntity(GetPartitionKey(inventorySnapshot.Timestamp), GetRowKey(id))
+            {
+                Time = inventorySnapshot.Timestamp,
+                Json = JsonConvert.SerializeObject(inventorySnapshot)
+            };
+
+            await _storage.InsertAsync(entity);
+            await UpdateIndexes(entity);
+        }
+
+        public async Task<InventorySnapshot> GetLastForDateAsync(DateTime date)
+        {
+            var index = await _indexStorage.GetDataAsync(GetIndexPartitionKey(date), IndexForLastRowKey);
+            if (index == null)
+            {
+                // no index for date, try to build the index
+                index = await BuildIndexForDate(date);
+                
+                if (index == null)
+                {
+                    // no data, can't return anything
+                    return null;    
+                }
+            }
+
+            var snapshot = await _storage.GetDataAsync(index);
+            if (snapshot == null)
+            {
+                return null;
+            }
+            
+            return JsonConvert.DeserializeObject<InventorySnapshot>(snapshot.Json);
+        }
+
+        public Task<InventorySnapshot> GetFirstForDateAsync(DateTime date)
+        {
+            return GetLastForDateAsync(date.AddDays(-1));
+        }
 
         private async Task<IEnumerable<InventorySnapshotEntity>> GetEntitiesAsync(DateTime startDate, DateTime endDate)
         {
@@ -93,40 +137,28 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
                     QueryComparisons.LessThanOrEqual,
                     GetPartitionKey(endDate)));
         }
-        
-        
-        public async Task InsertAsync(InventorySnapshot inventorySnapshot)
+
+        private async Task UpdateIndexes(InventorySnapshotEntity inventorySnapshotEntity)
         {
-            Guid id = Guid.NewGuid();
-            
-            var entity = new InventorySnapshotEntity(GetPartitionKey(inventorySnapshot.Timestamp), GetRowKey(id))
+            var existingIndex = await _indexStorage.GetDataAsync(GetIndexPartitionKey(inventorySnapshotEntity.Time),
+                IndexForLastRowKey);
+
+            if (existingIndex == null || (await _storage.GetDataAsync(existingIndex)).Time < inventorySnapshotEntity.Time)
             {
-                Json = JsonConvert.SerializeObject(inventorySnapshot)
-            };
-
-            await _storage.InsertAsync(entity);
-            await UpdateIndexes(inventorySnapshot, id);
-        }
-
-        private async Task UpdateIndexes(InventorySnapshot inventorySnapshot, Guid id)
-        {
-            // Update index for current day, it now must point to this the last received snapshot
-            await _indexStorage.InsertOrReplaceAsync(
-                new InventorySnapshotIndexEntity(GetIndexPartitionKey(inventorySnapshot.Timestamp), IndexForLastRowKey)
-                {
-                    ReferencePartitionKey = GetPartitionKey(inventorySnapshot.Timestamp),
-                    ReferenceRowKey = GetRowKey(id)
-                });
-            
-            
+                // Update index for current day, it now must point to this the last received snapshot
+                await _indexStorage.InsertOrReplaceAsync(
+                    AzureIndex.Create(GetIndexPartitionKey(inventorySnapshotEntity.Time), IndexForLastRowKey,
+                        inventorySnapshotEntity));    
+            }
+        
             // If we have index entries for any future date, they are now are invalid, we can just remove them,
             // as they will be reconstructed if needed
-                
-            var filter = TableQuery.GenerateFilterCondition(nameof(InventorySnapshotIndexEntity.PartitionKey),
-                QueryComparisons.GreaterThan,
-                GetIndexPartitionKey(inventorySnapshot.Timestamp));
             
-            var query = new TableQuery<InventorySnapshotIndexEntity>().Where(filter);
+            var filter = TableQuery.GenerateFilterCondition(nameof(AzureIndex.PartitionKey),
+                QueryComparisons.GreaterThan,
+                GetIndexPartitionKey(inventorySnapshotEntity.Time));
+        
+            var query = new TableQuery<AzureIndex>().Where(filter);
 
             var allNowInvalidIndexEntriesFromTheFuture = (await _indexStorage.WhereAsync(query)).ToList();
 
@@ -136,36 +168,7 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             }
         }
 
-        public async Task<InventorySnapshot> GetLastForDateAsync(DateTime date)
-        {
-            var index = await _indexStorage.GetDataAsync(GetIndexPartitionKey(date), IndexForLastRowKey);
-            if (index == null)
-            {
-                // no index for date, try to build the index
-                index = await BuildIndexForDate(date);
-                
-                if (index == null)
-                {
-                    // no data, can't return anything
-                    return null;    
-                }
-            }
-
-            var snapshot = await _storage.GetDataAsync(index.ReferencePartitionKey, index.ReferenceRowKey);
-            if (snapshot == null)
-            {
-                return null;
-            }
-            
-            return JsonConvert.DeserializeObject<InventorySnapshot>(snapshot.Json);
-        }
-
-        public Task<InventorySnapshot> GetFirstForDateAsync(DateTime date)
-        {
-            return GetLastForDateAsync(date.AddDays(-1));
-        }
-
-        private async Task<InventorySnapshotIndexEntity> BuildIndexForDate(DateTime date)
+        private async Task<AzureIndex> BuildIndexForDate(DateTime date)
         {
             var snapshotsFromTheDay = (await GetEntitiesAsync(date.Date, date.Date.AddDays(1))).ToList();
 
@@ -210,17 +213,13 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             }
         }
 
-        private async Task<InventorySnapshotIndexEntity> CreateIndexForLastEntry(DateTime date, IEnumerable<InventorySnapshotEntity> snapshotsFromTheDay, bool getFirst = false)
+        private async Task<AzureIndex> CreateIndexForLastEntry(DateTime date, IEnumerable<InventorySnapshotEntity> snapshotsFromTheDay, bool getFirst = false)
         {
             var lastFromTheDay = getFirst
-                ? snapshotsFromTheDay.OrderBy(x => x.Timestamp).First()
-                : snapshotsFromTheDay.OrderBy(x => x.Timestamp).Last();
+                ? snapshotsFromTheDay.OrderBy(x => x.Time).First()
+                : snapshotsFromTheDay.OrderBy(x => x.Time).Last();
             
-            var index = new InventorySnapshotIndexEntity(GetIndexPartitionKey(date), IndexForLastRowKey)
-            {
-                ReferencePartitionKey = lastFromTheDay.PartitionKey,
-                ReferenceRowKey = lastFromTheDay.RowKey
-            };
+            var index = AzureIndex.Create(GetIndexPartitionKey(date), IndexForLastRowKey, lastFromTheDay);
 
             await _indexStorage.InsertOrReplaceAsync(index);
 

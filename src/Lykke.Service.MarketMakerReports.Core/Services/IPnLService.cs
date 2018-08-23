@@ -6,10 +6,10 @@ namespace Lykke.Service.MarketMakerReports.Core.Services
 {
     public interface IPnLService
     {
-        Task<PnLResult> CalculatePnLAsync(DateTime startDate, DateTime endDate);
+        Task<PnLResult> GetPnLAsync(DateTime startDate, DateTime endDate);
         
-        Task<PnLResult> CalculateCurrentDayPnLAsync();
+        Task<PnLResult> GetCurrentDayPnLAsync();
         
-        Task<PnLResult> CalculateCurrentMonthPnLAsync();
+        Task<PnLResult> GetCurrentMonthPnLAsync();
     }
 }
