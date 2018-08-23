@@ -10,6 +10,7 @@ using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 using Lykke.Service.MarketMakerReports.Core.Exceptions;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.NettingEngine.Client;
+using Lykke.Service.NettingEngine.Client.Models.Inventories;
 
 namespace Lykke.Service.MarketMakerReports.Services
 {
@@ -31,26 +32,26 @@ namespace Lykke.Service.MarketMakerReports.Services
             _nettingEngineServiceClient = nettingEngineServiceClient;
         }
 
-        public async Task<PnLResult> CalculatePnLAsync(DateTime startDate, DateTime endDate)
+        public async Task<PnLResult> GetPnLAsync(DateTime startDate, DateTime endDate)
         {
-            var snapshots = await _inventorySnapshotService.GetStartEndSnapshotsAsync(startDate, endDate);
+            (InventorySnapshot startSnapshot, InventorySnapshot endSnapshot) = await _inventorySnapshotService.GetStartEndSnapshotsAsync(startDate, endDate);
             
-            if (snapshots.Start == null)
+            if (startSnapshot == null)
             {
                 throw new InvalidPnLCalculationException($"No InventorySnapshot for startDate {startDate}");
             }
 
-            if (snapshots.End == null)
+            if (endSnapshot == null)
             {
                 throw new InvalidPnLCalculationException($"No InventorySnapshot for endDate {endDate}");
             }
 
-            var depositChanges = await GetChangeDepositOperations(startDate, endDate);
+            IDictionary<string, decimal> depositChanges = await GetChangeDepositOperations(startDate, endDate);
 
             
             // get all assets from Start snapshot, all assets from End snapshot, join them to 
             // pairs (startSnapshot, endSnapshot) per asset and calculate PnL for every asset.
-            var pnLs = snapshots.Start.Assets.Join(snapshots.End.Assets, 
+            var pnLs = startSnapshot.Assets.Join(endSnapshot.Assets, 
                     x => x.AssetId, x => x.AssetId,
                     (start, end) => CalcPnLForAsset(start.AssetDisplayId, start, end, depositChanges.ContainsKey(start.AssetId) ? depositChanges[start.AssetId] : 0))
                 .Where(x => !x.IsEmpty())
@@ -60,27 +61,27 @@ namespace Lykke.Service.MarketMakerReports.Services
                 {
                     Adjusted = pnLs.Sum(x => x.Adjusted),
                     Directional = pnLs.Sum(x => x.Directional),
-                    StartDate = snapshots.Start.Timestamp,
-                    EndDate = snapshots.End.Timestamp,
+                    StartDate = startSnapshot.Timestamp,
+                    EndDate = endSnapshot.Timestamp,
                     AssetsPnLs = pnLs
                 };
         }
 
-        public Task<PnLResult> CalculateCurrentDayPnLAsync()
+        public Task<PnLResult> GetCurrentDayPnLAsync()
         {
             var now = DateTime.UtcNow;
-            return CalculatePnLAsync(now.Date, now);
+            return GetPnLAsync(now.Date, now);
         }
 
-        public Task<PnLResult> CalculateCurrentMonthPnLAsync()
+        public Task<PnLResult> GetCurrentMonthPnLAsync()
         {
             var now = DateTime.UtcNow;
-            return CalculatePnLAsync(now.RoundToMonth(), now);
+            return GetPnLAsync(now.RoundToMonth(), now);
         }
 
         private async Task<IDictionary<string, decimal>> GetChangeDepositOperations(DateTime startDate, DateTime endDate)
         {
-            var operations = await _nettingEngineServiceClient.ChangeDepositOperationApi
+            IReadOnlyList<ChangeDepositOperationSumModel> operations = await _nettingEngineServiceClient.ChangeDepositOperationApi
                 .GetSumsAsync(startDate, endDate, LykkeExchangeName, null);
 
             if (operations == null)
