@@ -23,7 +23,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         /// <response code="200">Audit messages</response>
         [HttpGet]
         [ProducesResponseType(typeof(IReadOnlyList<AuditMessageModel>), (int) HttpStatusCode.OK)]
-        public async Task<IReadOnlyList<AuditMessageModel>> Get(DateTime? from, DateTime? to, string clientId = null)
+        public async Task<IReadOnlyList<AuditMessageModel>> GetAsync(DateTime? from, DateTime? to, string clientId = null)
         {
             var auditMessages = await _auditMessageService.GetAsync(from, to, clientId);
             var model = Mapper.Map<List<AuditMessageModel>>(auditMessages);

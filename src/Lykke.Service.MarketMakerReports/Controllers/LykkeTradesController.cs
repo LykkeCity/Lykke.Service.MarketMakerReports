@@ -23,7 +23,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         /// <response code="200">Lykke trades</response>
         [HttpGet]
         [ProducesResponseType(typeof(IReadOnlyList<LykkeTradeModel>), (int) HttpStatusCode.OK)]
-        public async Task<IReadOnlyList<LykkeTradeModel>> Get(DateTime startDate, DateTime endDate)
+        public async Task<IReadOnlyList<LykkeTradeModel>> GetAsync(DateTime startDate, DateTime endDate)
         {
             var trades = await _lykkeTradeService.GetAsync(startDate, endDate);
             var model = Mapper.Map<List<LykkeTradeModel>>(trades);

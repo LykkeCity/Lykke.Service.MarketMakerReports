@@ -11,6 +11,6 @@ namespace Lykke.Service.MarketMakerReports.Client.Api
     public interface ILykkeTradesApi
     {
         [Get("/api/lykketrades")]
-        Task<IReadOnlyList<LykkeTradeModel>> Get(DateTime startDate, DateTime endDate);
+        Task<IReadOnlyList<LykkeTradeModel>> GetAsync(DateTime startDate, DateTime endDate);
     }
 }

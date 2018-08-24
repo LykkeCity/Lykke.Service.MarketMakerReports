@@ -11,6 +11,6 @@ namespace Lykke.Service.MarketMakerReports.Client.Api
     public interface IAuditMessagesApi
     {
         [Get("/api/auditmessages")]
-        Task<IReadOnlyList<AuditMessageModel>> Get(DateTime? from, DateTime? to, string clientId = null);
+        Task<IReadOnlyList<AuditMessageModel>> GetAsync(DateTime? from, DateTime? to, string clientId = null);
     }
 }

@@ -16,6 +16,7 @@
 *.tmp
 *.user
 *.lock.json
+/client/**/*.xml
 
 # Well-known infrastructure folders
 /packages/
