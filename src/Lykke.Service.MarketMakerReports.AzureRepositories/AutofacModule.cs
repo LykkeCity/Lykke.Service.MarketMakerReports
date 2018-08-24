@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using AzureStorage.Tables;
+using AzureStorage.Tables.Templates.Index;
 using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Lykke.Service.MarketMakerReports.Core.Repositories;
@@ -21,6 +22,9 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         {
             const string auditMessagesTableName = "AuditMessages";
             const string inventorySnapshotsTableName = "InventorySnapshots";
+            const string inventorySnapshotsIndexTableName = "InventorySnapshotsIndex";
+            const string lykkeTradesTableName = "LykkeTrades";
+            const string externalTradesTableName = "ExternalTrade";
             
             builder.Register(container => new AuditMessageRepository(
                     AzureTableStorage<AuditMessageEntity>.Create(_connectionString,
@@ -30,8 +34,22 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
 
             builder.Register(container => new InventorySnapshotRepository(
                     AzureTableStorage<InventorySnapshotEntity>.Create(_connectionString,
-                        inventorySnapshotsTableName, container.Resolve<ILogFactory>())))
+                        inventorySnapshotsTableName, container.Resolve<ILogFactory>()),
+                    AzureTableStorage<AzureIndex>.Create(_connectionString,
+                        inventorySnapshotsIndexTableName, container.Resolve<ILogFactory>())))
                 .As<IInventorySnapshotRepository>()
+                .SingleInstance();
+
+            builder.Register(container => new LykkeTradeRepository(
+                    AzureTableStorage<LykkeTradeEntity>.Create(_connectionString,
+                        lykkeTradesTableName, container.Resolve<ILogFactory>())))
+                .As<ILykkeTradeRepository>()
+                .SingleInstance();
+
+            builder.Register(container => new ExternalTradeRepository(
+                    AzureTableStorage<ExternalTradeEntity>.Create(_connectionString,
+                        externalTradesTableName, container.Resolve<ILogFactory>())))
+                .As<IExternalTradeRepository>()
                 .SingleInstance();
         }
     }

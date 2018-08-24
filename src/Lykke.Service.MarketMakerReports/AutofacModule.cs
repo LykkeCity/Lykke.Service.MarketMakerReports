@@ -5,6 +5,7 @@ using Lykke.Service.MarketMakerReports.Managers;
 using Lykke.Service.MarketMakerReports.Rabbit.Subscribers;
 using Lykke.Service.MarketMakerReports.Settings;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings;
+using Lykke.Service.NettingEngine.Client;
 using Lykke.Service.RateCalculator.Client;
 using Lykke.SettingsReader;
 
@@ -36,6 +37,7 @@ namespace Lykke.Service.MarketMakerReports
             RegisterRabbit(builder);
             
             builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
+            builder.RegisterNettingEngineClient(_appSettings.CurrentValue.NettingEngineServiceClient, null);
         }
 
         private void RegisterRabbit(ContainerBuilder builder)
@@ -50,6 +52,16 @@ namespace Lykke.Service.MarketMakerReports
             builder.RegisterType<InventorySnapshotSubscriber>()
                 .AsSelf()
                 .WithParameter(TypedParameter.From(rabbitSettings.InventorySnapshot))
+                .SingleInstance();
+
+            builder.RegisterType<LykkeTradeSubscriber>()
+                .AsSelf()
+                .WithParameter(TypedParameter.From(rabbitSettings.LykkeTrade))
+                .SingleInstance();
+
+            builder.RegisterType<ExternalTradeSubscriber>()
+                .AsSelf()
+                .WithParameter(TypedParameter.From(rabbitSettings.ExternalTrade))
                 .SingleInstance();
         }
     }

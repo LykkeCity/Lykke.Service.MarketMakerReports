@@ -48,7 +48,7 @@ namespace Lykke.Service.MarketMakerReports.Services
         private async Task FillUsdForInventories(InventorySnapshot inventorySnapshot)
         {
             var balanceRecords = inventorySnapshot.Assets
-                .SelectMany(x => x.Inventories.Select(i => new BalanceRecord(decimal.ToDouble(i.Volume), x.Asset)))
+                .SelectMany(x => x.Inventories.Select(i => new BalanceRecord(decimal.ToDouble(i.Volume), x.AssetId)))
                 .ToList();
 
             var balanceRecordsInUsd = await GetInUsdAsync(balanceRecords);
@@ -64,7 +64,7 @@ namespace Lykke.Service.MarketMakerReports.Services
         private async Task FillUsdForBalances(InventorySnapshot inventorySnapshot)
         {
             var balanceRecords = inventorySnapshot.Assets
-                .SelectMany(x => x.Balances.Select(b => new BalanceRecord(decimal.ToDouble(b.Amount), x.Asset)))
+                .SelectMany(x => x.Balances.Select(b => new BalanceRecord(decimal.ToDouble(b.Amount), x.AssetId)))
                 .ToList();
 
             var balanceRecordsInUsd = await GetInUsdAsync(balanceRecords);
@@ -91,9 +91,22 @@ namespace Lykke.Service.MarketMakerReports.Services
             return balanceRecordsInUsd;
         }
 
-        public Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate)
+        public Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate, Periodicity periodicity)
         {
-            return _inventorySnapshotRepository.GetAsync(startDate, endDate);
+            return _inventorySnapshotRepository.GetAsync(startDate, endDate, periodicity);
+        }
+
+        public Task<InventorySnapshot> GetLastAsync()
+        {
+            return _inventorySnapshotRepository.GetLastForDateAsync(DateTime.UtcNow);
+        }
+
+        public async Task<(InventorySnapshot Start, InventorySnapshot End)> GetStartEndSnapshotsAsync(DateTime startDate, DateTime endDate)
+        {
+            var startSnapshot = await _inventorySnapshotRepository.GetFirstForDateAsync(startDate);
+            var endSnapshot = await _inventorySnapshotRepository.GetLastForDateAsync(endDate);
+
+            return (startSnapshot, endSnapshot);
         }
     }
 }
