@@ -9,5 +9,7 @@
         public ExchangeSettings LykkeTrade { get; set; }
         
         public ExchangeSettings ExternalTrade { get; set; }
+        
+        public ExchangeSettings HealthIssue { get; set; }
     }
 }

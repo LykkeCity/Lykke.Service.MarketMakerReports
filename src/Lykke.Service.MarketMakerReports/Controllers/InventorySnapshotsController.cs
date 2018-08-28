@@ -23,7 +23,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         /// <response code="200">Inventory snapshot</response>
         [HttpGet]
         [ProducesResponseType(typeof(IReadOnlyList<InventorySnapshotModel>), (int) HttpStatusCode.OK)]
-        public async Task<IReadOnlyList<InventorySnapshotModel>> Get(DateTime startDate, DateTime endDate, Periodicity periodicity)
+        public async Task<IReadOnlyList<InventorySnapshotModel>> GetAsync(DateTime startDate, DateTime endDate, Periodicity periodicity)
         {
             var snapshots = await _inventorySnapshotService.GetAsync(startDate, endDate, (Core.Domain.InventorySnapshots.Periodicity)periodicity);
             var model = Mapper.Map<List<InventorySnapshotModel>>(snapshots);
@@ -33,7 +33,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         /// <response code="200">The last inventory snapshot</response>
         [HttpGet("last")]
         [ProducesResponseType(typeof(IReadOnlyList<InventorySnapshotModel>), (int) HttpStatusCode.OK)]
-        public async Task<InventorySnapshotModel> GetLast()
+        public async Task<InventorySnapshotModel> GetLastAsync()
         {
             var snapshot = await _inventorySnapshotService.GetLastAsync();
             var model = Mapper.Map<InventorySnapshotModel>(snapshot);
