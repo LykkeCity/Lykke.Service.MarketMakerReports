@@ -6,12 +6,13 @@ using Lykke.Common.Log;
 using Lykke.RabbitMqBroker;
 using Lykke.RabbitMqBroker.Subscriber;
 using Lykke.Service.MarketMakerReports.Core.Services;
+using Lykke.Service.MarketMakerReports.Managers;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings;
 using Lykke.Service.NettingEngine.Client.RabbitMq.Health;
 
 namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
 {
-    public class HealthIssueSubscriber: IDisposable
+    public class HealthIssueSubscriber: IDisposable, IStartable, IStoppable
     {
         private readonly ILogFactory _logFactory;
         private readonly ExchangeSettings _settings;
