@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using AutoMapper;
 using Lykke.Service.MarketMakerReports.Client.Models.AuditMessages;
+using Lykke.Service.MarketMakerReports.Client.Models.Health;
 using Lykke.Service.MarketMakerReports.Client.Models.InventorySnapshots;
 using Lykke.Service.MarketMakerReports.Client.Models.PnL;
+using Lykke.Service.MarketMakerReports.Core.Domain.Health;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
+using Lykke.Service.NettingEngine.Client.RabbitMq.Health;
 using Lykke.Service.NettingEngine.Client.RabbitMq.InventorySnapshots;
 
 namespace Lykke.Service.MarketMakerReports
@@ -37,6 +40,9 @@ namespace Lykke.Service.MarketMakerReports
                 .ForMember(x => x.EndBalance, m => m.MapFrom(x => x.EndBalance.Balance))
                 .ForMember(x => x.EndBalanceInUsd, m => m.MapFrom(x => x.EndBalance.BalanceInUsd))
                 .ForMember(x => x.EndPrice, m => m.MapFrom(x => x.EndBalance.Price));
+
+            CreateMap<HealthIssue, HealthIssueModel>(MemberList.Destination);
+            CreateMap<HealthIssueMessage, HealthIssue>(MemberList.Source);
         }
     }
 }

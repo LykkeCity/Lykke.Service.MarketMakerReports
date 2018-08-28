@@ -25,6 +25,7 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             const string inventorySnapshotsIndexTableName = "InventorySnapshotsIndex";
             const string lykkeTradesTableName = "LykkeTrades";
             const string externalTradesTableName = "ExternalTrade";
+            const string healthIssuesTableName = "HealthIssues";
             
             builder.Register(container => new AuditMessageRepository(
                     AzureTableStorage<AuditMessageEntity>.Create(_connectionString,
@@ -50,6 +51,12 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
                     AzureTableStorage<ExternalTradeEntity>.Create(_connectionString,
                         externalTradesTableName, container.Resolve<ILogFactory>())))
                 .As<IExternalTradeRepository>()
+                .SingleInstance();
+
+            builder.Register(container => new HealthIssueRepository(
+                    AzureTableStorage<HealthIssueEntity>.Create(_connectionString,
+                        healthIssuesTableName, container.Resolve<ILogFactory>())))
+                .As<IHealthIssueRepository>()
                 .SingleInstance();
         }
     }

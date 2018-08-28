@@ -51,6 +51,16 @@ MarketMakerReportsService:
       Queue:
         settings-key: MarketMakerReportService-Rabbit-ExternalTrade-Queue
 
+      HealthIssue:
+        ConnectionString:
+          settings-key: MarketMakerReportService-Rabbit-HealthIssue-ConnectionString
+          types:
+          - RabbitMq
+        Exchange:
+          settings-key: MarketMakerReportService-Rabbit-HealthIssue-Exchange
+        Queue:
+          settings-key: MarketMakerReportService-Rabbit-HealthIssue-Queue
+
 RateCalculatorServiceClient:
   ServiceUrl:
     settings-key: RateCalculatorServiceUrl
