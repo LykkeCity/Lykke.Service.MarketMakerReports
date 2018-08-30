@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Lykke.Service.MarketMakerReports.Client.Models.Trades;
@@ -11,6 +10,7 @@ namespace Lykke.Service.MarketMakerReports.Client.Api
     public interface IExternalTradesApi
     {
         [Get("/api/externaltrades")]
-        Task<IReadOnlyList<ExternalTradeModel>> GetAsync(DateTime startDate, DateTime endDate);
+        Task<ContinuationTokenResult<ExternalTradeModel>> GetAsync(DateTime startDate, DateTime endDate,
+            int? limit, [CanBeNull] string continuationToken);
     }
 }

@@ -18,7 +18,8 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             _storage = storage;
         }
 
-        public async Task<IReadOnlyList<LykkeTrade>> GetAsync(DateTime startDate, DateTime endDate)
+        public async Task<(IReadOnlyList<LykkeTrade> entities, string continuationToken)> GetAsync(DateTime startDate, 
+            DateTime endDate, int? limit, string continuationToken)
         {
             var filter = TableQuery.CombineFilters(
                 TableQuery.GenerateFilterCondition(nameof(LykkeTradeEntity.PartitionKey), QueryComparisons.GreaterThan,
@@ -27,11 +28,12 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
                 TableQuery.GenerateFilterCondition(nameof(LykkeTradeEntity.PartitionKey), QueryComparisons.LessThan,
                     GetPartitionKey(endDate)));
 
-            var query = new TableQuery<LykkeTradeEntity>().Where(filter);
-            
-            IEnumerable<LykkeTradeEntity> entities = await _storage.WhereAsync(query);
+            var query = new TableQuery<LykkeTradeEntity>().Where(filter).Take(limit);
 
-            return Mapper.Map<List<LykkeTrade>>(entities);
+            (IEnumerable<LykkeTradeEntity> entities, string token) = 
+                await _storage.GetDataWithContinuationTokenAsync(query, continuationToken);
+
+            return (Mapper.Map<List<LykkeTrade>>(entities), token);
         }
 
         public async Task InsertAsync(LykkeTrade lykkeTrade)

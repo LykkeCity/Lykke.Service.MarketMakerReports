@@ -21,9 +21,10 @@ namespace Lykke.Service.MarketMakerReports.Services
             return _externalTradeRepository.InsertAsync(externalTrade);
         }
 
-        public Task<IReadOnlyList<ExternalTrade>> GetAsync(DateTime startDate, DateTime endDate)
+        public Task<(IReadOnlyList<ExternalTrade> entities, string continuationToken)> GetAsync(
+            DateTime startDate, DateTime endDate, int? limit, string continuationToken)
         {
-            return _externalTradeRepository.GetAsync(startDate, endDate);
+            return _externalTradeRepository.GetAsync(startDate, endDate, limit, continuationToken);
         }
     }
 }
