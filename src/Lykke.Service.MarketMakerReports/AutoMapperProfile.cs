@@ -7,8 +7,8 @@ using Lykke.Service.MarketMakerReports.Client.Models.PnL;
 using Lykke.Service.MarketMakerReports.Core.Domain.Health;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
-using Lykke.Service.NettingEngine.Client.RabbitMq.Health;
 using Lykke.Service.NettingEngine.Client.RabbitMq.InventorySnapshots;
+using HealthIssueContract = Lykke.Service.MarketMakerReports.Contracts.HealthIssues.HealthIssue;
 
 namespace Lykke.Service.MarketMakerReports
 {
@@ -42,7 +42,7 @@ namespace Lykke.Service.MarketMakerReports
                 .ForMember(x => x.EndPrice, m => m.MapFrom(x => x.EndBalance.Price));
 
             CreateMap<HealthIssue, HealthIssueModel>(MemberList.Destination);
-            CreateMap<HealthIssueMessage, HealthIssue>(MemberList.Source);
+            CreateMap<HealthIssueContract, HealthIssue>(MemberList.Source);
         }
     }
 }

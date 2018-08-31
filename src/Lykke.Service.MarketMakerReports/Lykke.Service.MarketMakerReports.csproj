@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\client\Lykke.Service.MarketMakerReports.Client\Lykke.Service.MarketMakerReports.Client.csproj" />
+    <ProjectReference Include="..\..\contracts\Lykke.Service.MarketMakerReports.Contracts.HealthIssues\Lykke.Service.MarketMakerReports.Contracts.HealthIssues.csproj" />
     <ProjectReference Include="..\Lykke.Service.MarketMakerReports.AzureRepositories\Lykke.Service.MarketMakerReports.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.Service.MarketMakerReports.Core\Lykke.Service.MarketMakerReports.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.MarketMakerReports.Services\Lykke.Service.MarketMakerReports.Services.csproj" />
