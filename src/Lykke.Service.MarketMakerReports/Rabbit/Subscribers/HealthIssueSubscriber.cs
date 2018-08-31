@@ -5,10 +5,10 @@ using Common.Log;
 using Lykke.Common.Log;
 using Lykke.RabbitMqBroker;
 using Lykke.RabbitMqBroker.Subscriber;
+using Lykke.Service.MarketMakerReports.Contracts.HealthIssues;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.MarketMakerReports.Managers;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings;
-using Lykke.Service.NettingEngine.Client.RabbitMq.Health;
 
 namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
 {
@@ -19,7 +19,7 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
         private readonly IHealthMonitorService _healthMonitorService;
         private readonly ILog _log;
     
-        private RabbitMqSubscriber<HealthIssueMessage> _subscriber;
+        private RabbitMqSubscriber<HealthIssue> _subscriber;
 
         public HealthIssueSubscriber(ILogFactory logFactory,
             ExchangeSettings exchangeSettings,
@@ -39,16 +39,16 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
             settings.DeadLetterExchangeName = null;
             settings.IsDurable = true;
 
-            _subscriber = new RabbitMqSubscriber<HealthIssueMessage>(_logFactory, settings,
+            _subscriber = new RabbitMqSubscriber<HealthIssue>(_logFactory, settings,
                     new ResilientErrorHandlingStrategy(_logFactory, settings, TimeSpan.FromSeconds(10)))
-                .SetMessageDeserializer(new JsonMessageDeserializer<HealthIssueMessage>())
+                .SetMessageDeserializer(new JsonMessageDeserializer<HealthIssue>())
                 .SetMessageReadStrategy(new MessageReadQueueStrategy())
                 .Subscribe(ProcessMessageAsync)
                 .CreateDefaultBinding()
                 .Start();
         }
 
-        private async Task ProcessMessageAsync(HealthIssueMessage message)
+        private async Task ProcessMessageAsync(HealthIssue message)
         {
             try
             {
