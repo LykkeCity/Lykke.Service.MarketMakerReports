@@ -3,6 +3,8 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
     public class AssetPnL
     {
         public string Asset { get; set; }
+        
+        public string Exchange { get; set; }
 
         public decimal Adjusted { get; set; }
         

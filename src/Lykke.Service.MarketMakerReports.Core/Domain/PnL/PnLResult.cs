@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
 {
@@ -9,12 +10,20 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
         
         public DateTime EndDate { get; set; }
         
-        public decimal Adjusted { get; set; }
-        
-        public decimal Directional { get; set; }
+        public IEnumerable<ExchangePnL> ExchangePnLs { get; set; }
 
-        public decimal Total => Adjusted + Directional;
-        
-        public IReadOnlyList<AssetPnL> AssetsPnLs { get; set; }
+        public ExchangePnL OnAllExchanges
+        {
+            get
+            {
+                return new ExchangePnL
+                {
+                    Exchange = "Total",
+                    Adjusted = ExchangePnLs.Sum(x => x.Adjusted),
+                    Directional = ExchangePnLs.Sum(x => x.Directional),
+                    AssetsPnLs = ExchangePnLs.SelectMany(x => x.AssetsPnLs).ToList()
+                };
+            }
+        }
     }
 }

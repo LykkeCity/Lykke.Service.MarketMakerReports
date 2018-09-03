@@ -9,21 +9,6 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
     public class PnLResultModel
     {
         /// <summary>
-        /// Adjusted part of the PnL (as result of trading) in USD
-        /// </summary>
-        public decimal Adjusted { get; set; }
-        
-        /// <summary>
-        /// Directional part of the PnL (as result of price change), in USD
-        /// </summary>
-        public decimal Directional { get; set; }
-
-        /// <summary>
-        /// Total PnL as a sum of all the parts, in USD
-        /// </summary>
-        public decimal Total { get; set; }
-        
-        /// <summary>
         /// The date of the first used for PnL calculation data
         /// </summary>
         public DateTime StartDate { get; set; }
@@ -34,8 +19,13 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
         public DateTime EndDate { get; set; }
         
         /// <summary>
-        /// PnLs by assets
+        /// PnL info by exchange
         /// </summary>
-        public IReadOnlyList<AssetPnLModel> AssetsPnLs { get; set; }
+        public IEnumerable<ExchangePnLModel> ExchangePnLs { get; set; }
+        
+        /// <summary>
+        /// Total PnL info for all the exchanges
+        /// </summary>
+        public ExchangePnLModel OnAllExchanges { get; set; }
     }
 }
