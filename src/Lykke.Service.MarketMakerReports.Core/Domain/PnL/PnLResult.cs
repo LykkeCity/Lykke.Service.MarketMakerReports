@@ -20,8 +20,7 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
                 {
                     Exchange = "Total",
                     Adjusted = ExchangePnLs.Sum(x => x.Adjusted),
-                    Directional = ExchangePnLs.Sum(x => x.Directional),
-                    AssetsPnLs = ExchangePnLs.SelectMany(x => x.AssetsPnLs).ToList()
+                    Directional = ExchangePnLs.Sum(x => x.Directional)
                 };
             }
         }
