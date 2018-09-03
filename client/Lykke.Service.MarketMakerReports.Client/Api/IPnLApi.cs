@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Lykke.Service.MarketMakerReports.Client.Models.PnL;
@@ -17,5 +18,8 @@ namespace Lykke.Service.MarketMakerReports.Client.Api
 
         [Get("/api/pnl/currentmonth")]
         Task<PnLResultModel> GetForCurrentMonthAsync();
+        
+        [Get("/api/pnl/realised")]
+        Task<IReadOnlyList<AssetRealisedPnLModel>> GetRealisedAsync(string assetId, int? limit);
     }
 }

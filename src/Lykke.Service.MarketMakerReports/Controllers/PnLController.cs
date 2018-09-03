@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Lykke.Service.MarketMakerReports.Client.Api;
 using Lykke.Service.MarketMakerReports.Client.Models.PnL;
+using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +15,12 @@ namespace Lykke.Service.MarketMakerReports.Controllers
     public class PnLController : Controller, IPnLApi
     {
         private readonly IPnLService _pnLService;
+        private readonly IAssetRealisedPnLService _assetRealisedPnLService;
 
-        public PnLController(IPnLService pnLService)
+        public PnLController(IPnLService pnLService, IAssetRealisedPnLService assetRealisedPnLService)
         {
             _pnLService = pnLService;
+            _assetRealisedPnLService = assetRealisedPnLService;
         }
 
         [HttpGet]
@@ -48,6 +52,18 @@ namespace Lykke.Service.MarketMakerReports.Controllers
             var result = await _pnLService.GetCurrentMonthPnLAsync();
 
             var model = Mapper.Map<PnLResultModel>(result);
+
+            return model;
+        }
+
+        /// <response code="200">A collection of asset realised PnL records.</response>
+        [HttpGet("realised")]
+        [ProducesResponseType(typeof(IReadOnlyList<AssetRealisedPnLModel>), (int)HttpStatusCode.OK)]
+        public async Task<IReadOnlyList<AssetRealisedPnLModel>> GetRealisedAsync(string assetId, int? limit)
+        {
+            IReadOnlyList<AssetRealisedPnL> assetRealisedPnL = await _assetRealisedPnLService.GetAsync(assetId, limit);
+
+            var model = Mapper.Map<List<AssetRealisedPnLModel>>(assetRealisedPnL);
 
             return model;
         }

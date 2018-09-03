@@ -2,21 +2,15 @@ using System;
 
 namespace Lykke.Service.MarketMakerReports.Core.Domain.Trades
 {
-    public class ExternalTrade
+    public class ExternalTrade : Trade
     {
-        public string OrderId { get; set; }
+        public ExternalTrade()
+        {
+            // TODO: Add trade id to the rabbit mq contract 
+            Id = Guid.NewGuid().ToString("D");
+        }
         
-        public string Exchange { get; set; }
-
-        public string AssetPairId { get; set; }
-
-        public TradeType Type { get; set; }
-
-        public DateTime Time { get; set; }
-
-        public decimal Price { get; set; }
-
-        public decimal Volume { get; set; }
+        public string OrderId { get; set; }
 
         public decimal OriginalPrice { get; set; }
 

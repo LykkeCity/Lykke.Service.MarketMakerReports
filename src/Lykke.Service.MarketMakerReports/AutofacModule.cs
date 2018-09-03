@@ -1,6 +1,8 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using JetBrains.Annotations;
 using Lykke.Sdk;
+using Lykke.Service.Assets.Client;
 using Lykke.Service.MarketMakerReports.Managers;
 using Lykke.Service.MarketMakerReports.Rabbit.Subscribers;
 using Lykke.Service.MarketMakerReports.Settings;
@@ -38,6 +40,10 @@ namespace Lykke.Service.MarketMakerReports
             
             builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
             builder.RegisterNettingEngineClient(_appSettings.CurrentValue.NettingEngineServiceClient, null);
+            
+            builder.RegisterAssetsClient(AssetServiceSettings
+                .Create(new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl),
+                    _appSettings.CurrentValue.MarketMakerReportsService.AssetsCacheExpirationPeriod));
         }
 
         private void RegisterRabbit(ContainerBuilder builder)

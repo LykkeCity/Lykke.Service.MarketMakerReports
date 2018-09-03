@@ -3,7 +3,11 @@ using AutoMapper;
 using Lykke.Service.MarketMakerReports.Client.Models.AuditMessages;
 using Lykke.Service.MarketMakerReports.Client.Models.InventorySnapshots;
 using Lykke.Service.MarketMakerReports.Client.Models.PnL;
+using Lykke.Service.MarketMakerReports.Client.Models.Settings;
+using Lykke.Service.MarketMakerReports.Client.Models.Trades;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
+using Lykke.Service.MarketMakerReports.Core.Domain.Settings;
+using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
 using Lykke.Service.NettingEngine.Client.RabbitMq.InventorySnapshots;
 
@@ -37,6 +41,17 @@ namespace Lykke.Service.MarketMakerReports
                 .ForMember(x => x.EndBalance, m => m.MapFrom(x => x.EndBalance.Balance))
                 .ForMember(x => x.EndBalanceInUsd, m => m.MapFrom(x => x.EndBalance.BalanceInUsd))
                 .ForMember(x => x.EndPrice, m => m.MapFrom(x => x.EndBalance.Price));
+            
+            CreateMap<LykkeTrade, LykkeTradeModel>(MemberList.Source)
+                .ForSourceMember(src => src.Exchange, opt => opt.Ignore());
+            
+            CreateMap<ExternalTrade, ExternalTradeModel>(MemberList.Source)
+                .ForSourceMember(src => src.Id, opt => opt.Ignore());
+            
+            CreateMap<AssetRealisedPnL, AssetRealisedPnLModel>(MemberList.Source);
+            
+            CreateMap<AssetRealisedPnLSettings, AssetRealisedPnLSettingsModel>(MemberList.Source);
+            CreateMap<AssetRealisedPnLSettingsModel, AssetRealisedPnLSettings>(MemberList.Destination);
         }
     }
 }

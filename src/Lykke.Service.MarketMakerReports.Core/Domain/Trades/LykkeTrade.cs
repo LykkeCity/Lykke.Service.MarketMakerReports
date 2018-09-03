@@ -1,22 +1,13 @@
-using System;
-
 namespace Lykke.Service.MarketMakerReports.Core.Domain.Trades
 {
-    public class LykkeTrade
+    public class LykkeTrade : Trade
     {
-        public string AssetPairId { get; set; }
-
-        public TradeType Type { get; set; }
-
-        public DateTime Time { get; set; }
-
-        public decimal Price { get; set; }
-
-        public decimal Volume { get; set; }
-
+        public LykkeTrade()
+        {
+            Exchange = "lykke";
+        }
+        
         public decimal OppositeSideVolume { get; set; }
-
-        public string Id { get; set; }
 
         public string LimitOrderId { get; set; }
 
