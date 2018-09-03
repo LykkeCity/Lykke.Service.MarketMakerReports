@@ -81,17 +81,17 @@ namespace Lykke.Service.MarketMakerReports.Services
             return GetPnLAsync(now.RoundToMonth(), now);
         }
 
-        private async Task<IDictionary<string, decimal>> GetChangeDepositOperations(DateTime startDate, DateTime endDate)
+                private async Task<IDictionary<string, decimal>> GetChangeDepositOperations(DateTime startDate, DateTime endDate)
         {
             IReadOnlyList<ChangeDepositOperationSumModel> operations = await _nettingEngineServiceClient.ChangeDepositOperationApi
-                .GetSumsAsync(startDate, endDate, LykkeExchangeName, null);
+                .GetSumsAsync(startDate, endDate, null, null);
 
             if (operations == null)
             {
                 throw new InvalidPnLCalculationException("NettingEngine returned null for ChangeDepositOperations");
             }
 
-            return operations.ToDictionary(x => x.AssetId, x => x.SumOfAllOperations);
+            return operations.GroupBy(o => o.AssetId).ToDictionary(x => x.Key, x => x.Sum(o => o.SumOfAllOperations));
         }
 
         private AssetPnL CalcPnLForAsset(string asset,
@@ -99,22 +99,32 @@ namespace Lykke.Service.MarketMakerReports.Services
             AssetBalanceInventory end,
             decimal depositChanges)
         {
-            var startAssetBalance = new BalanceOnDate(start.GetBalanceByExchange(LykkeExchangeName));
-            var endAssetBalance = new BalanceOnDate(end.GetBalanceByExchange(LykkeExchangeName));
-
-            var inventory = endAssetBalance.Balance - startAssetBalance.Balance;
-            var adjustedPnL = endAssetBalance.Price * (inventory - depositChanges);
-            var directionalPnL = startAssetBalance.Balance * (endAssetBalance.Price - startAssetBalance.Price);
+            decimal priceStart = start.TotalBalance != 0 ? start.TotalBalanceInUsd / start.TotalBalance : 0;
+            decimal priceEnd = end.TotalBalance != 0 ? end.TotalBalanceInUsd / end.TotalBalance : 0;
+            
+            var inventory = end.TotalBalance - start.TotalBalance;
+            var adjustedPnL = priceEnd * (inventory - depositChanges);
+            var directionalPnL = start.TotalBalance * (priceEnd - priceStart);
 
             return new AssetPnL
+            {
+                Asset = asset,
+                Adjusted = adjustedPnL,
+                Directional = directionalPnL,
+                StartBalance = new BalanceOnDate(new AssetBalance
                 {
-                    Asset = asset,
-                    Adjusted = adjustedPnL,
-                    Directional = directionalPnL,
-                    StartBalance = startAssetBalance,
-                    EndBalance = endAssetBalance,
-                    SumOfChangeDepositOperations = depositChanges
-                };
+                    AmountInUsd = start.TotalBalanceInUsd,
+                    Amount = start.TotalBalance,
+                    Exchange = "total"
+                }),
+                EndBalance = new BalanceOnDate(new AssetBalance
+                {
+                    AmountInUsd = end.TotalBalanceInUsd,
+                    Amount = end.TotalBalance,
+                    Exchange = "total"
+                }),
+                SumOfChangeDepositOperations = depositChanges
+            };
         }
     }
 }

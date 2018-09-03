@@ -12,5 +12,6 @@
   <ItemGroup>
     <PackageReference Include="Lykke.Service.NettingEngine.Client" Version="1.0.23" />
     <PackageReference Include="Lykke.Service.RateCalculator.Client" Version="1.2.0" />
+    <PackageReference Include="Lykke.Service.Assets.Client" Version="4.4.0" />
   </ItemGroup>
 </Project>
