@@ -9,6 +9,7 @@ namespace Lykke.Service.MarketMakerReports.Core.Repositories
     {
         Task InsertAsync(ExternalTrade externalTrade);
         
-        Task<IReadOnlyList<ExternalTrade>> GetAsync(DateTime startDate, DateTime endDate);
+        Task<(IReadOnlyList<ExternalTrade> entities, string continuationToken)> GetAsync(DateTime startDate, DateTime endDate, 
+            int? limit, string continuationToken);
     }
 }

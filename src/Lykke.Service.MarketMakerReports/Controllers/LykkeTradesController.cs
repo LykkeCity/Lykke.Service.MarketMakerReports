@@ -22,12 +22,17 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         
         /// <response code="200">Lykke trades</response>
         [HttpGet]
-        [ProducesResponseType(typeof(IReadOnlyList<LykkeTradeModel>), (int) HttpStatusCode.OK)]
-        public async Task<IReadOnlyList<LykkeTradeModel>> GetAsync(DateTime startDate, DateTime endDate)
+        [ProducesResponseType(typeof(ContinuationTokenResult<LykkeTradeModel>), (int) HttpStatusCode.OK)]
+        public async Task<ContinuationTokenResult<LykkeTradeModel>> GetAsync(DateTime startDate, DateTime endDate, 
+            int? limit, string continuationToken)
         {
-            var trades = await _lykkeTradeService.GetAsync(startDate, endDate);
-            var model = Mapper.Map<List<LykkeTradeModel>>(trades);
-            return model;
+            var tradesWithToken = await _lykkeTradeService.GetAsync(startDate, endDate, limit, continuationToken);
+            
+            return new ContinuationTokenResult<LykkeTradeModel>
+            {
+                Entities = Mapper.Map<List<LykkeTradeModel>>(tradesWithToken.entities),
+                ContinuationToken = tradesWithToken.continuationToken
+            };
         }
     }
 }

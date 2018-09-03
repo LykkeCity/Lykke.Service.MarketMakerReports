@@ -17,8 +17,9 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         {
             _storage = storage;
         }
-
-        public async Task<IReadOnlyList<ExternalTrade>> GetAsync(DateTime startDate, DateTime endDate)
+        
+        public async Task<(IReadOnlyList<ExternalTrade> entities, string continuationToken)> GetAsync(DateTime startDate, 
+            DateTime endDate, int? limit, string continuationToken)
         {
             var filter = TableQuery.CombineFilters(
                 TableQuery.GenerateFilterCondition(nameof(ExternalTradeEntity.PartitionKey), QueryComparisons.GreaterThan,
@@ -27,11 +28,12 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
                 TableQuery.GenerateFilterCondition(nameof(ExternalTradeEntity.PartitionKey), QueryComparisons.LessThan,
                     GetPartitionKey(endDate)));
 
-            var query = new TableQuery<ExternalTradeEntity>().Where(filter);
-            
-            IEnumerable<ExternalTradeEntity> entities = await _storage.WhereAsync(query);
+            var query = new TableQuery<ExternalTradeEntity>().Where(filter).Take(limit);
 
-            return Mapper.Map<List<ExternalTrade>>(entities);
+            (IEnumerable<ExternalTradeEntity> entities, string token) = 
+                await _storage.GetDataWithContinuationTokenAsync(query, continuationToken);
+
+            return (Mapper.Map<List<ExternalTrade>>(entities), token);
         }
         
         public async Task InsertAsync(ExternalTrade externalTrade)
