@@ -29,7 +29,7 @@ namespace Lykke.Service.MarketMakerReports.Services
                         Exchange = x.Key,
                         Adjusted = x.Value.Sum(v => v.Adjusted),
                         Directional = x.Value.Sum(v => v.Directional),
-                        AssetsPnLs = x.Value
+                        AssetsPnLs = x.Value.Where(v => !v.IsEmpty()).ToList()
                     })
                 };
         }

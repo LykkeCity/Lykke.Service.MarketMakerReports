@@ -5,6 +5,11 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
     public class ExchangePnLModel
     {
         /// <summary>
+        /// Name of the Exchange
+        /// </summary>
+        public string Exchange { get; set; }
+        
+        /// <summary>
         /// Adjusted part of the PnL (as result of trading) in USD
         /// </summary>
         public decimal Adjusted { get; set; }
