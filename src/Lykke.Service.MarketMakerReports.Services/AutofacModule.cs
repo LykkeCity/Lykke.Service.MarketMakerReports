@@ -28,6 +28,10 @@ namespace Lykke.Service.MarketMakerReports.Services
             builder.RegisterType<PnLService>()
                 .As<IPnLService>()
                 .SingleInstance();
+
+            builder.RegisterType<HealthMonitorService>()
+                .As<IHealthMonitorService>()
+                .SingleInstance();
         }
     }
 }

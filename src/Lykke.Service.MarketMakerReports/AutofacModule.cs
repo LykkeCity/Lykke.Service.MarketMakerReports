@@ -8,6 +8,7 @@ using Lykke.Service.MarketMakerReports.Settings.ServiceSettings;
 using Lykke.Service.NettingEngine.Client;
 using Lykke.Service.RateCalculator.Client;
 using Lykke.SettingsReader;
+using IStartable = Lykke.Service.MarketMakerReports.Managers.IStartable;
 
 namespace Lykke.Service.MarketMakerReports
 {
@@ -45,23 +46,33 @@ namespace Lykke.Service.MarketMakerReports
             RabbitSettings rabbitSettings = _appSettings.CurrentValue.MarketMakerReportsService.Rabbit;
 
             builder.RegisterType<AuditMessageSubscriber>()
-                .AsSelf()
+                .As<IStartable>()
+                .As<IStoppable>()
                 .WithParameter(TypedParameter.From(rabbitSettings.AuditMessage))
                 .SingleInstance();
 
             builder.RegisterType<InventorySnapshotSubscriber>()
-                .AsSelf()
+                .As<IStartable>()
+                .As<IStoppable>()
                 .WithParameter(TypedParameter.From(rabbitSettings.InventorySnapshot))
                 .SingleInstance();
 
             builder.RegisterType<LykkeTradeSubscriber>()
-                .AsSelf()
+                .As<IStartable>()
+                .As<IStoppable>()
                 .WithParameter(TypedParameter.From(rabbitSettings.LykkeTrade))
                 .SingleInstance();
 
             builder.RegisterType<ExternalTradeSubscriber>()
-                .AsSelf()
+                .As<IStartable>()
+                .As<IStoppable>()
                 .WithParameter(TypedParameter.From(rabbitSettings.ExternalTrade))
+                .SingleInstance();
+
+            builder.RegisterType<HealthIssueSubscriber>()
+                .As<IStartable>()
+                .As<IStoppable>()
+                .WithParameter(TypedParameter.From(rabbitSettings.HealthIssue))
                 .SingleInstance();
         }
     }
