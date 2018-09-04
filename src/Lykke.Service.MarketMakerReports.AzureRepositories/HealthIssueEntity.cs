@@ -1,5 +1,6 @@
 using System;
 using Lykke.AzureStorage.Tables;
+using Lykke.Service.MarketMakerReports.Core.Domain.Health;
 
 namespace Lykke.Service.MarketMakerReports.AzureRepositories
 {
@@ -23,5 +24,9 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         public string Type { get; set; }
         
         public string Message { get; set; }
+        
+        public string Details { get; set; }
+        
+        public Severity Severity { get; set; }
     }
 }
