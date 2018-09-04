@@ -11,5 +11,9 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.Health
         public string Type { get; set; }
         
         public string Message { get; set; }
+        
+        public string Details { get; set; }
+        
+        public Severity Severity { get; set; }
     }
 }
