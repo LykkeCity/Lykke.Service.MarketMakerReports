@@ -66,9 +66,11 @@ namespace Lykke.Service.MarketMakerReports.Services
             var adjustedPnL = endAssetBalance.Price * (inventory - depositChanges);
             var directionalPnL = startAssetBalance.Balance * (endAssetBalance.Price - startAssetBalance.Price);
 
+            var assetDisplayId = start?.AssetDisplayId ?? end?.AssetDisplayId ?? asset;
+            
             return new AssetPnL
                 {
-                    Asset = asset,
+                    Asset = assetDisplayId,
                     Exchange = exchange,
                     Adjusted = adjustedPnL,
                     Directional = directionalPnL,
