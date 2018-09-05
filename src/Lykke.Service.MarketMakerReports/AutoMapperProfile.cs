@@ -4,11 +4,9 @@ using Lykke.Service.MarketMakerReports.Client.Models.AuditMessages;
 using Lykke.Service.MarketMakerReports.Client.Models.Health;
 using Lykke.Service.MarketMakerReports.Client.Models.InventorySnapshots;
 using Lykke.Service.MarketMakerReports.Client.Models.PnL;
-using Lykke.Service.MarketMakerReports.Client.Models.Settings;
 using Lykke.Service.MarketMakerReports.Client.Models.Trades;
 using Lykke.Service.MarketMakerReports.Core.Domain.Health;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
-using Lykke.Service.MarketMakerReports.Core.Domain.Settings;
 using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
 using Lykke.Service.NettingEngine.Client.RabbitMq.InventorySnapshots;
@@ -55,9 +53,6 @@ namespace Lykke.Service.MarketMakerReports
                 .ForSourceMember(src => src.Id, opt => opt.Ignore());
             
             CreateMap<AssetRealisedPnL, AssetRealisedPnLModel>(MemberList.Source);
-            
-            CreateMap<AssetRealisedPnLSettings, AssetRealisedPnLSettingsModel>(MemberList.Source);
-            CreateMap<AssetRealisedPnLSettingsModel, AssetRealisedPnLSettings>(MemberList.Destination);
         }
     }
 }
