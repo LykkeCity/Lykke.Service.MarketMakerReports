@@ -32,8 +32,8 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             CreateMap<AssetRealisedPnL, AssetRealisedPnLEntity>(MemberList.Source);
             CreateMap<AssetRealisedPnLEntity, AssetRealisedPnL>(MemberList.Destination);
             
-            CreateMap<AssetRealisedPnLSettings, AssetRealisedPnLSettingsEntity>(MemberList.Source);
-            CreateMap<AssetRealisedPnLSettingsEntity, AssetRealisedPnLSettings>(MemberList.Destination);
+            CreateMap<WalletSettings, WalletSettingsEntity>(MemberList.Source);
+            CreateMap<WalletSettingsEntity, WalletSettings>(MemberList.Destination);
         }
     }
 }

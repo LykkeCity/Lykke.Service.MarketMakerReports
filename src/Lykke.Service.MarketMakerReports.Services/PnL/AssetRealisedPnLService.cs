@@ -24,76 +24,105 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
     {
         private readonly IAssetRealisedPnLRepository _assetRealisedPnLRepository;
         private readonly IAssetRealisedPnLCalculator _assetRealisedPnLCalculator;
-        private readonly IAssetRealisedPnLSettingsService _assetRealisedPnLSettingsService;
+        private readonly IWalletSettingsService _walletSettingsService;
         private readonly IRateCalculatorClient _rateCalculatorClient;
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
         private readonly ILog _log;
-        
+
         private readonly AssetRealisedPnLCache _cache = new AssetRealisedPnLCache();
 
         public AssetRealisedPnLService(
             IAssetRealisedPnLRepository assetRealisedPnLRepository,
             IAssetRealisedPnLCalculator assetRealisedPnLCalculator,
-            IAssetRealisedPnLSettingsService assetRealisedPnLSettingsService,
+            IWalletSettingsService walletSettingsService,
             IRateCalculatorClient rateCalculatorClient,
             IAssetsServiceWithCache assetsServiceWithCache,
             ILogFactory logFactory)
         {
             _assetRealisedPnLRepository = assetRealisedPnLRepository;
             _assetRealisedPnLCalculator = assetRealisedPnLCalculator;
-            _assetRealisedPnLSettingsService = assetRealisedPnLSettingsService;
+            _walletSettingsService = walletSettingsService;
             _rateCalculatorClient = rateCalculatorClient;
             _assetsServiceWithCache = assetsServiceWithCache;
             _log = logFactory.CreateLog(this);
         }
 
-        public Task<IReadOnlyList<AssetRealisedPnL>> GetAsync(string assetId, int? limit)
+        public async Task<IReadOnlyCollection<AssetRealisedPnL>> GetLastAsync(string walletId)
         {
-            return _assetRealisedPnLRepository.GetAsync(assetId, limit);
+            IReadOnlyCollection<AssetRealisedPnL> assetRealisedPnLs = _cache.Get(walletId);
+
+            if (assetRealisedPnLs == null)
+            {
+                WalletSettings walletSettings = await _walletSettingsService.GetWalletAsync(walletId);
+
+                Task<AssetRealisedPnL>[] tasks = walletSettings.Assets
+                    .Select(assetId => _assetRealisedPnLRepository.GetLastAsync(walletId, assetId))
+                    .ToArray();
+
+                await Task.WhenAll(tasks);
+
+                assetRealisedPnLs = tasks.Select(task => task.Result).ToArray();
+
+                foreach (AssetRealisedPnL assetRealisedPnL in assetRealisedPnLs)
+                    _cache.Set(assetRealisedPnL);
+            }
+
+            return assetRealisedPnLs;
+        }
+
+        public Task<IReadOnlyCollection<AssetRealisedPnL>> GetByAssetAsync(string walletId, string assetId,
+            DateTime date, int? limit)
+        {
+            return _assetRealisedPnLRepository.GetAsync(walletId, assetId, date, limit);
         }
 
         public async Task CalculateAsync(Trade trade)
         {
-            try
-            {
-                AssetPair assetPair = await _assetsServiceWithCache.TryGetAssetPairAsync(trade.AssetPairId);
+//            try
+//            {
+//                AssetPair assetPair = await _assetsServiceWithCache.TryGetAssetPairAsync(trade.AssetPairId);
+//
+//                AssetRealisedPnLSettings assetRealisedPnLSettings = await _walletSettingsService.GetAsync();
+//
+//                if (!assetRealisedPnLSettings.Assets.Contains(assetPair.BaseAssetId))
+//                    return;
+//
+//                AssetRealisedPnL lastAssetRealisedPnL = _cache.Get(assetPair.BaseAssetId);
+//
+//                if (lastAssetRealisedPnL == null)
+//                {
+//                    lastAssetRealisedPnL = await _assetRealisedPnLRepository.GetLastAsync(assetPair.BaseAssetId);
+//
+//                    if (lastAssetRealisedPnL != null)
+//                        _cache.Set(lastAssetRealisedPnL);
+//                    else
+//                        lastAssetRealisedPnL = new AssetRealisedPnL();
+//                }
+//
+//                MarketProfile marketProfile = await _rateCalculatorClient.GetMarketProfileAsync();
+//
+//                Quote quote =
+//                    await GetQuoteAsync(marketProfile, assetPair.BaseAssetId, assetRealisedPnLSettings.AssetId);
+//
+//                Quote crossQuote =
+//                    await GetQuoteAsync(marketProfile, assetPair.QuotingAssetId, assetRealisedPnLSettings.AssetId);
+//
+//                AssetRealisedPnL assetRealisedPnL = _assetRealisedPnLCalculator
+//                    .Calculate(lastAssetRealisedPnL, trade, quote, crossQuote, assetRealisedPnLSettings.AssetId);
+//
+//                await _assetRealisedPnLRepository.InsertAsync(assetRealisedPnL);
+//
+//                _cache.Set(assetRealisedPnL);
+//            }
+//            catch (Exception exception)
+//            {
+//                _log.Warning("An error occured while processing trade", exception, trade);
+//            }
+        }
 
-                AssetRealisedPnLSettings assetRealisedPnLSettings = await _assetRealisedPnLSettingsService.GetAsync();
-
-                if (!assetRealisedPnLSettings.Assets.Contains(assetPair.BaseAssetId))
-                    return;
-
-                AssetRealisedPnL lastAssetRealisedPnL = _cache.Get(assetPair.BaseAssetId);
-
-                if (lastAssetRealisedPnL == null)
-                {
-                    lastAssetRealisedPnL = await _assetRealisedPnLRepository.GetLastAsync(assetPair.BaseAssetId);
-
-                    if (lastAssetRealisedPnL != null)
-                        _cache.Set(lastAssetRealisedPnL);
-                    else
-                        lastAssetRealisedPnL = new AssetRealisedPnL();
-                }
-
-                MarketProfile marketProfile = await _rateCalculatorClient.GetMarketProfileAsync();
-
-                Quote quote =
-                    await GetQuoteAsync(marketProfile, assetPair.BaseAssetId, assetRealisedPnLSettings.AssetId);
-
-                Quote crossQuote =
-                    await GetQuoteAsync(marketProfile, assetPair.QuotingAssetId, assetRealisedPnLSettings.AssetId);
-
-                AssetRealisedPnL assetRealisedPnL = _assetRealisedPnLCalculator
-                    .Calculate(lastAssetRealisedPnL, trade, quote, crossQuote, assetRealisedPnLSettings.AssetId);
-
-                await _assetRealisedPnLRepository.InsertAsync(assetRealisedPnL);
-
-                _cache.Set(assetRealisedPnL);
-            }
-            catch (Exception exception)
-            {
-                _log.Warning("An error occured while processing trade", exception, trade);
-            }
+        public Task InitializeAsync(string walletId, string assetId, double amount)
+        {
+            return Task.CompletedTask;
         }
 
         private async Task<Quote> GetQuoteAsync(MarketProfile marketProfile, string baseAssetId, string quoteAssetId)

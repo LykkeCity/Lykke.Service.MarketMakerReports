@@ -24,7 +24,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(PnLResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PnLResultModel), (int) HttpStatusCode.OK)]
         public async Task<PnLResultModel> GetAsync(DateTime startDate, DateTime endDate)
         {
             var result = await _pnLService.GetPnLAsync(startDate, endDate);
@@ -35,7 +35,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         }
 
         [HttpGet("currentday")]
-        [ProducesResponseType(typeof(PnLResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PnLResultModel), (int) HttpStatusCode.OK)]
         public async Task<PnLResultModel> GetForCurrentDayAsync()
         {
             var result = await _pnLService.GetCurrentDayPnLAsync();
@@ -46,7 +46,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         }
 
         [HttpGet("currentmonth")]
-        [ProducesResponseType(typeof(PnLResultModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PnLResultModel), (int) HttpStatusCode.OK)]
         public async Task<PnLResultModel> GetForCurrentMonthAsync()
         {
             var result = await _pnLService.GetCurrentMonthPnLAsync();
@@ -56,12 +56,27 @@ namespace Lykke.Service.MarketMakerReports.Controllers
             return model;
         }
 
-        /// <response code="200">A collection of asset realised PnL records.</response>
-        [HttpGet("realised")]
-        [ProducesResponseType(typeof(IReadOnlyList<AssetRealisedPnLModel>), (int)HttpStatusCode.OK)]
-        public async Task<IReadOnlyList<AssetRealisedPnLModel>> GetRealisedAsync(string assetId, int? limit)
+        /// <response code="200">A collection of latest realised pnl</response>
+        [HttpGet("realised/{walletId}/assets")]
+        [ProducesResponseType(typeof(IReadOnlyList<AssetRealisedPnLModel>), (int) HttpStatusCode.OK)]
+        public async Task<IReadOnlyList<AssetRealisedPnLModel>> GetLastRealisedPnlAsync(string walletId)
         {
-            IReadOnlyList<AssetRealisedPnL> assetRealisedPnL = await _assetRealisedPnLService.GetAsync(assetId, limit);
+            IReadOnlyCollection<AssetRealisedPnL> assetRealisedPnL =
+                await _assetRealisedPnLService.GetLastAsync(walletId);
+
+            var model = Mapper.Map<List<AssetRealisedPnLModel>>(assetRealisedPnL);
+
+            return model;
+        }
+
+        /// <response code="200">A collection of asset realised pnl</response>
+        [HttpGet("realised/{walletId}/assets/{assetId}")]
+        [ProducesResponseType(typeof(IReadOnlyList<AssetRealisedPnLModel>), (int) HttpStatusCode.OK)]
+        public async Task<IReadOnlyList<AssetRealisedPnLModel>> GetRealisedByAssetAsync(string walletId, string assetId,
+            DateTime date, int? limit)
+        {
+            IReadOnlyCollection<AssetRealisedPnL> assetRealisedPnL =
+                await _assetRealisedPnLService.GetByAssetAsync(walletId, assetId, date, limit);
 
             var model = Mapper.Map<List<AssetRealisedPnLModel>>(assetRealisedPnL);
 

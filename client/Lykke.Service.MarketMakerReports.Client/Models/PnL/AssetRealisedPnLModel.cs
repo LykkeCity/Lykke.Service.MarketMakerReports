@@ -11,6 +11,11 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
     public class AssetRealisedPnLModel
     {
         /// <summary>
+        /// The wallet id.
+        /// </summary>
+        public string WalletId { get; set; }
+        
+        /// <summary>
         /// The asset id.
         /// </summary>
         public string AssetId { get; set; }

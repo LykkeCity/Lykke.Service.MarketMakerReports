@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
@@ -7,8 +8,13 @@ namespace Lykke.Service.MarketMakerReports.Core.Services
 {
     public interface IAssetRealisedPnLService
     {
-        Task<IReadOnlyList<AssetRealisedPnL>> GetAsync(string assetId, int? limit);
+        Task<IReadOnlyCollection<AssetRealisedPnL>> GetLastAsync(string walletId);
+
+        Task<IReadOnlyCollection<AssetRealisedPnL>> GetByAssetAsync(string walletId, string assetId, DateTime date,
+            int? limit);
         
         Task CalculateAsync(Trade trade);
+
+        Task InitializeAsync(string walletId, string assetId, double amount);
     }
 }

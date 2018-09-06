@@ -17,7 +17,7 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         {
             _connectionString = connectionString;
         }
-        
+
         protected override void Load(ContainerBuilder builder)
         {
             const string auditMessagesTableName = "AuditMessages";
@@ -27,8 +27,8 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             const string externalTradesTableName = "ExternalTrade";
             const string healthIssuesTableName = "HealthIssues";
             const string assetRealisedPnLTableName = "AssetRealisedPnL";
-            const string assetRealisedPnLSettingsTableName = "AssetRealisedPnLSettings";
-            
+            const string walletSettingsTableName = "WalletSettings";
+
             builder.Register(container => new AuditMessageRepository(
                     AzureTableStorage<AuditMessageEntity>.Create(_connectionString,
                         auditMessagesTableName, container.Resolve<ILogFactory>())))
@@ -66,11 +66,11 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
                         assetRealisedPnLTableName, container.Resolve<ILogFactory>())))
                 .As<IAssetRealisedPnLRepository>()
                 .SingleInstance();
-            
-            builder.Register(container => new AssetRealisedPnLSettingsRepository(
-                    AzureTableStorage<AssetRealisedPnLSettingsEntity>.Create(_connectionString,
-                        assetRealisedPnLSettingsTableName, container.Resolve<ILogFactory>())))
-                .As<IAssetRealisedPnLSettingsRepository>()
+
+            builder.Register(container => new WalletSettingsRepository(
+                    AzureTableStorage<WalletSettingsEntity>.Create(_connectionString,
+                        walletSettingsTableName, container.Resolve<ILogFactory>())))
+                .As<IWalletSettingsRepository>()
                 .SingleInstance();
         }
     }

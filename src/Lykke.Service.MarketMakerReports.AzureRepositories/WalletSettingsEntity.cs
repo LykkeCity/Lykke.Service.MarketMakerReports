@@ -6,21 +6,27 @@ using Lykke.AzureStorage.Tables.Entity.Annotation;
 namespace Lykke.Service.MarketMakerReports.AzureRepositories
 {
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-    public class AssetRealisedPnLSettingsEntity : AzureTableEntity
+    public class WalletSettingsEntity : AzureTableEntity
     {
-        public AssetRealisedPnLSettingsEntity()
+        public WalletSettingsEntity()
         {
         }
 
-        public AssetRealisedPnLSettingsEntity(string partitionKey, string rowKey)
+        public WalletSettingsEntity(string partitionKey, string rowKey)
         {
             PartitionKey = partitionKey;
             RowKey = rowKey;
         }
-        
-        public string AssetId { get; set; }
+
+        public string Id { get; set; }
+
+        public string Name { get; set; }
+
+        public bool Enabled { get; set; }
+
+        public bool HandleExternalTrades { get; set; }
 
         [JsonValueSerializer]
-        public IReadOnlyList<string> Assets { get; set; }
+        public IReadOnlyCollection<string> Assets { get; set; }
     }
 }
