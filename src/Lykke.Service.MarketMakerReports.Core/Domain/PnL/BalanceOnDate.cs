@@ -11,6 +11,10 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
             Price = Balance == 0 ? 0 : BalanceInUsd / Balance;
         }
         
+        private BalanceOnDate()
+        {
+        }
+        
         public decimal Balance { get; }
         
         public decimal BalanceInUsd { get; }
@@ -18,5 +22,7 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
         public decimal Price { get; }
 
         public bool IsEmpty() => Balance == 0 && BalanceInUsd == 0;
+
+        public static BalanceOnDate Empty => new BalanceOnDate();
     }
 }
