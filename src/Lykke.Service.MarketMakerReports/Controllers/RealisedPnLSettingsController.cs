@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Lykke.Service.MarketMakerReports.Client.Api;
 using Lykke.Service.MarketMakerReports.Client.Models.RealisedPnLSettings;
+using Lykke.Service.MarketMakerReports.Core.Domain.Settings;
+using Lykke.Service.MarketMakerReports.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.MarketMakerReports.Controllers
@@ -10,28 +13,35 @@ namespace Lykke.Service.MarketMakerReports.Controllers
     [Route("/api/[controller]")]
     public class RealisedPnLSettingsController : Controller, IRealisedPnLSettingsApi
     {
+        private readonly IWalletSettingsService _walletSettingsService;
+        private readonly IAssetRealisedPnLService _assetRealisedPnLService;
+
+        public RealisedPnLSettingsController(
+            IWalletSettingsService walletSettingsService,
+            IAssetRealisedPnLService assetRealisedPnLService)
+        {
+            _walletSettingsService = walletSettingsService;
+            _assetRealisedPnLService = assetRealisedPnLService;
+        }
+        
         /// <response code="200">A collection of settings of wallets.</response>
         [HttpGet("wallets")]
         [ProducesResponseType(typeof(IReadOnlyCollection<WalletSettingsModel>), (int)HttpStatusCode.OK)]
-        public Task<IReadOnlyCollection<WalletSettingsModel>> GetWalletsAsync()
+        public async Task<IReadOnlyCollection<WalletSettingsModel>> GetWalletsAsync()
         {
-            throw new System.NotImplementedException();
+            IReadOnlyCollection<WalletSettings> walletSettings = await _walletSettingsService.GetWalletsAsync();
+
+            return Mapper.Map<List<WalletSettingsModel>>(walletSettings);
         }
 
         /// <response code="200">A wallet settings.</response>
         [HttpGet("wallets/{walletId}")]
-        [ProducesResponseType(typeof(IReadOnlyCollection<WalletSettingsModel>), (int)HttpStatusCode.OK)]
-        public Task<WalletSettingsModel> GetWalletAsync(string walletId)
+        [ProducesResponseType(typeof(WalletSettingsModel), (int)HttpStatusCode.OK)]
+        public async Task<WalletSettingsModel> GetWalletAsync(string walletId)
         {
-            throw new System.NotImplementedException();
-        }
+            WalletSettings walletSettings = await _walletSettingsService.GetWalletAsync(walletId);
 
-        /// <response code="200">A collection of settings of assets.</response>
-        [HttpGet("wallets/{walletId}/assets")]
-        [ProducesResponseType(typeof(IReadOnlyCollection<WalletSettingsModel>), (int)HttpStatusCode.OK)]
-        public Task<IReadOnlyCollection<AssetSettingsModel>> GetAssetsAsync(string walletId)
-        {
-            throw new System.NotImplementedException();
+            return Mapper.Map<WalletSettingsModel>(walletSettings);
         }
 
         /// <response code="204">A wallet settings successfully added.</response>
@@ -39,15 +49,20 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public Task AddWalletAsync(WalletSettingsModel walletSettingsModel)
         {
-            throw new System.NotImplementedException();
+            var walletSettings = Mapper.Map<WalletSettings>(walletSettingsModel);
+            
+            return _walletSettingsService.AddWalletAsync(walletSettings);
         }
 
         /// <response code="204">An asset settings successfully added.</response>
         [HttpPost("assets")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public Task AddAssetAsync(AssetSettingsModel assetSettingsModel)
+        public async Task AddAssetToWalletAsync(AssetSettingsModel assetSettingsModel)
         {
-            throw new System.NotImplementedException();
+            await _walletSettingsService.AddAssetToWalletAsync(assetSettingsModel.WalletId, assetSettingsModel.Id);
+
+            await _assetRealisedPnLService.InitializeAsync(assetSettingsModel.WalletId, assetSettingsModel.Id,
+                assetSettingsModel.Amount);
         }
 
         /// <response code="204">A wallet settings successfully updated.</response>
@@ -55,7 +70,9 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public Task UpdateWalletAsync(WalletSettingsModel walletSettingsModel)
         {
-            throw new System.NotImplementedException();
+            var walletSettings = Mapper.Map<WalletSettings>(walletSettingsModel);
+            
+            return _walletSettingsService.UpdateWalletAsync(walletSettings);
         }
 
         /// <response code="204">A wallet settings successfully deleted.</response>
@@ -63,15 +80,15 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public Task DeleteWalletAsync(string walletId)
         {
-            throw new System.NotImplementedException();
+            return _walletSettingsService.DeleteWalletAsync(walletId);
         }
 
         /// <response code="204">An asset settings successfully deleted.</response>
         [HttpDelete("wallets/{walletId}/assets/{assetId}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public Task DeleteAssetAsync(string walletId, string assetId)
+        public Task RemoveAssetFromWalletAsync(string walletId, string assetId)
         {
-            throw new System.NotImplementedException();
+            return _walletSettingsService.RemoveAssetFromWalletAsync(walletId, assetId);
         }
     }
 }

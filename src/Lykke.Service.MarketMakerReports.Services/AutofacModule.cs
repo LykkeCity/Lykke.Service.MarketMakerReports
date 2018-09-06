@@ -32,8 +32,8 @@ namespace Lykke.Service.MarketMakerReports.Services
                 .As<IPnLService>()
                 .SingleInstance();
 
-            builder.RegisterType<AssetRealisedPnLSettingsService>()
-                .As<IAssetRealisedPnLSettingsService>()
+            builder.RegisterType<WalletSettingsService>()
+                .As<IWalletSettingsService>()
                 .SingleInstance();
             
             builder.RegisterType<AssetRealisedPnLService>()

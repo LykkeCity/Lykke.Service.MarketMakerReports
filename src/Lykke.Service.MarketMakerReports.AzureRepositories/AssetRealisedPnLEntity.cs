@@ -18,6 +18,8 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             RowKey = rowKey;
         }
 
+        public string WalletId { get; set; }
+
         public string AssetId { get; set; }
 
         public DateTime Time { get; set; }

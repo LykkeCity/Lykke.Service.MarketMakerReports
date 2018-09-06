@@ -17,7 +17,7 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         {
             _connectionString = connectionString;
         }
-        
+
         protected override void Load(ContainerBuilder builder)
         {
             const string auditMessagesTableName = "AuditMessages";
@@ -26,8 +26,8 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             const string lykkeTradesTableName = "LykkeTrades";
             const string externalTradesTableName = "ExternalTrade";
             const string assetRealisedPnLTableName = "AssetRealisedPnL";
-            const string assetRealisedPnLSettingsTableName = "AssetRealisedPnLSettings";
-            
+            const string walletSettingsTableName = "WalletSettings";
+
             builder.Register(container => new AuditMessageRepository(
                     AzureTableStorage<AuditMessageEntity>.Create(_connectionString,
                         auditMessagesTableName, container.Resolve<ILogFactory>())))
@@ -53,17 +53,17 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
                         externalTradesTableName, container.Resolve<ILogFactory>())))
                 .As<IExternalTradeRepository>()
                 .SingleInstance();
-            
+
             builder.Register(container => new AssetRealisedPnLRepository(
                     AzureTableStorage<AssetRealisedPnLEntity>.Create(_connectionString,
                         assetRealisedPnLTableName, container.Resolve<ILogFactory>())))
                 .As<IAssetRealisedPnLRepository>()
                 .SingleInstance();
-            
-            builder.Register(container => new AssetRealisedPnLSettingsRepository(
-                    AzureTableStorage<AssetRealisedPnLSettingsEntity>.Create(_connectionString,
-                        assetRealisedPnLSettingsTableName, container.Resolve<ILogFactory>())))
-                .As<IAssetRealisedPnLSettingsRepository>()
+
+            builder.Register(container => new WalletSettingsRepository(
+                    AzureTableStorage<WalletSettingsEntity>.Create(_connectionString,
+                        walletSettingsTableName, container.Resolve<ILogFactory>())))
+                .As<IWalletSettingsRepository>()
                 .SingleInstance();
         }
     }

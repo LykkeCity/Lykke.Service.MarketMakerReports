@@ -9,6 +9,11 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
     public class AssetRealisedPnL
     {
         /// <summary>
+        /// The wallet id.
+        /// </summary>
+        public string WalletId { get; set; }
+        
+        /// <summary>
         /// The asset id.
         /// </summary>
         public string AssetId { get; set; }
