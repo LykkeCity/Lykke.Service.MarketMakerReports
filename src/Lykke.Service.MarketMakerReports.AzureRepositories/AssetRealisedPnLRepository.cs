@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using AzureStorage;
-using Common;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 using Lykke.Service.MarketMakerReports.Core.Repositories;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -19,12 +18,27 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         {
             _storage = storage;
         }
-        
-        public async Task<IReadOnlyList<AssetRealisedPnL>> GetAsync(string assetId, int? limit)
+
+        public async Task<IReadOnlyCollection<AssetRealisedPnL>> GetAsync(string walletId, string assetId, DateTime date,
+            int? limit)
         {
-            string filter = TableQuery.GenerateFilterCondition(nameof(AssetRealisedPnLEntity.PartitionKey),
-                QueryComparisons.Equal, GetPartitionKey(assetId));
-            
+            string filterByPk = TableQuery.GenerateFilterCondition(nameof(AssetRealisedPnLEntity.PartitionKey),
+                QueryComparisons.Equal, GetPartitionKey(walletId));
+
+            string filterByPeriod = TableQuery.CombineFilters(
+                TableQuery.GenerateFilterCondition(nameof(AssetRealisedPnLEntity.RowKey), QueryComparisons.GreaterThan,
+                    GetRowKey(date.Date.AddDays(1))),
+                TableOperators.And,
+                TableQuery.GenerateFilterCondition(nameof(AssetRealisedPnLEntity.RowKey), QueryComparisons.LessThan,
+                    GetRowKey(date.Date.AddMilliseconds(-1))));
+
+            string filterByAssetId = TableQuery.GenerateFilterCondition(nameof(AssetRealisedPnLEntity.AssetId),
+                QueryComparisons.Equal, assetId);
+
+            string filter = TableQuery.CombineFilters(filterByPk, TableOperators.And, filterByPeriod);
+
+            filter = TableQuery.CombineFilters(filter, TableOperators.And, filterByAssetId);
+
             var query = new TableQuery<AssetRealisedPnLEntity>().Where(filter).Take(limit);
 
             IEnumerable<AssetRealisedPnLEntity> entities = await _storage.WhereAsync(query);
@@ -32,11 +46,20 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             return Mapper.Map<List<AssetRealisedPnL>>(entities);
         }
 
-        public async Task<AssetRealisedPnL> GetLastAsync(string assetId)
+        public async Task<AssetRealisedPnL> GetLastAsync(string walletId, string assetId)
         {
-            IReadOnlyList<AssetRealisedPnL> result = await GetAsync(assetId, 1);
+            string filter = TableQuery.CombineFilters(
+                TableQuery.GenerateFilterCondition(nameof(AssetRealisedPnLEntity.PartitionKey),
+                    QueryComparisons.Equal, GetPartitionKey(walletId)),
+                TableOperators.And,
+                TableQuery.GenerateFilterCondition(nameof(AssetRealisedPnLEntity.AssetId),
+                    QueryComparisons.Equal, assetId));
 
-            return result.FirstOrDefault();
+            var query = new TableQuery<AssetRealisedPnLEntity>().Where(filter).Take(1);
+
+            IEnumerable<AssetRealisedPnLEntity> entities = await _storage.WhereAsync(query);
+
+            return Mapper.Map<AssetRealisedPnL>(entities.FirstOrDefault());
         }
 
         public async Task InsertAsync(AssetRealisedPnL assetRealisedPnL)
@@ -49,10 +72,10 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             await _storage.InsertAsync(entity);
         }
 
-        private string GetPartitionKey(string assetId)
-            => assetId;
+        private string GetPartitionKey(string walletId)
+            => walletId;
 
         private string GetRowKey(DateTime time)
-            => IdGenerator.GenerateDateTimeIdNewFirst(time);
+            => (DateTime.MaxValue.Ticks - time.Ticks).ToString("D19");
     }
 }

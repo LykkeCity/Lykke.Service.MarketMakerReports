@@ -15,14 +15,11 @@ namespace Lykke.Service.MarketMakerReports.Client.Api
         [Get("/api/realisedpnlsettigns/wallets/{walletId}")]
         Task<WalletSettingsModel> GetWalletAsync(string walletId);
         
-        [Get("/api/realisedpnlsettigns/wallets/{walletId}/assets")]
-        Task<IReadOnlyCollection<AssetSettingsModel>> GetAssetsAsync(string walletId);
-        
         [Post("/api/realisedpnlsettigns/wallets")]
         Task AddWalletAsync(WalletSettingsModel walletSettingsModel);
         
         [Post("/api/realisedpnlsettigns/assets")]
-        Task AddAssetAsync(AssetSettingsModel assetSettingsModel);
+        Task AddAssetToWalletAsync(AssetSettingsModel assetSettingsModel);
         
         [Put("/api/realisedpnlsettigns/wallets")]
         Task UpdateWalletAsync(WalletSettingsModel walletSettingsModel);
@@ -31,6 +28,6 @@ namespace Lykke.Service.MarketMakerReports.Client.Api
         Task DeleteWalletAsync(string walletId);
         
         [Delete("/api/realisedpnlsettigns/wallets/{walletId}/assets/{assetId}")]
-        Task DeleteAssetAsync(string walletId, string assetId);
+        Task RemoveAssetFromWalletAsync(string walletId, string assetId);
     }
 }
