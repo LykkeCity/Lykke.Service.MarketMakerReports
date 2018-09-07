@@ -23,6 +23,8 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
 
         public DateTime Time { get; set; }
 
+        public string LimitOrderId { get; set; }
+        
         public string OppositeClientId { get; set; }
         
         public string OppositeLimitOrderId { get; set; }

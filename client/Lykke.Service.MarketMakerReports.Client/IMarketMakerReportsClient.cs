@@ -18,5 +18,7 @@ namespace Lykke.Service.MarketMakerReports.Client
         IExternalTradesApi ExternalTradesApi { get; }
         
         IPnLApi PnLApi { get; }
+        
+        IRealisedPnLSettingsApi RealisedPnLSettings { get; }
     }
 }
