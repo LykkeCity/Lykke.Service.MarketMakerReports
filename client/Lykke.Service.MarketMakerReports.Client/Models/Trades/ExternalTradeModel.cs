@@ -28,5 +28,9 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.Trades
         public decimal Commission { get; set; }
 
         public decimal ExchangeExecuteVolume { get; set; }
+        
+        public string BaseAssetId { get; set; }
+        
+        public string QuoteAssetId { get; set; }
     }
 }

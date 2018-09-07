@@ -37,5 +37,9 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
         public decimal Commission { get; set; }
 
         public decimal ExchangeExecuteVolume { get; set; }
+        
+        public string BaseAssetId { get; set; }
+        
+        public string QuoteAssetId { get; set; }
     }
 }

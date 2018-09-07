@@ -13,7 +13,9 @@ namespace Lykke.Service.MarketMakerReports.Core.Services
         Task<IReadOnlyCollection<AssetRealisedPnL>> GetByAssetAsync(string walletId, string assetId, DateTime date,
             int? limit);
         
-        Task CalculateAsync(Trade trade);
+        Task CalculateAsync(LykkeTrade lykkeTrade);
+
+        Task CalculateAsync(ExternalTrade externalTrade);
 
         Task InitializeAsync(string walletId, string assetId, double amount);
     }

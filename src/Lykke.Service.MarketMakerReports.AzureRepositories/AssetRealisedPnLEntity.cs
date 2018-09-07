@@ -24,25 +24,39 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
 
         public DateTime Time { get; set; }
 
+        public string Exchange { get; set; }
+        
         public string TradeId { get; set; }
 
-        public string Exchange { get; set; }
-
-        public string AssetPair { get; set; }
+        public string TradeAssetPair { get; set; }
 
         public decimal TradePrice { get; set; }
 
         public decimal TradeVolume { get; set; }
 
-        public TradeType TraderType { get; set; }
+        public TradeType TradeType { get; set; }
 
         public string CrossAssetPair { get; set; }
 
+        public decimal CrossPrice { get; set; }
+        
         public decimal Price { get; set; }
 
-        public decimal CrossRate { get; set; }
+        public decimal Volume { get; set; }
 
         public decimal OppositeVolume { get; set; }
+        
+        public bool Inverted { get; set; }
+        
+        public decimal PrevAvgPrice { get; set; }
+        
+        public decimal PrevCumulativeVolume { get; set; }
+        
+        public decimal PrevCumulativeOppositeVolume { get; set; }
+        
+        public decimal CloseVolume { get; set; }
+        
+        public decimal RealisedPnL { get; set; }
 
         public decimal AvgPrice { get; set; }
 
@@ -50,8 +64,12 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
 
         public decimal CumulativeOppositeVolume { get; set; }
 
-        public decimal RealisedPnL { get; set; }
+        public decimal CumulativeRealisedPnL { get; set; }
 
         public decimal UnrealisedPnL { get; set; }
+        
+        public string OppositeClientId { get; set; }
+        
+        public string OppositeLimitOrderId { get; set; }
     }
 }

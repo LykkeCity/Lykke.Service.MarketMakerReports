@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using JetBrains.Annotations;
-using Lykke.Service.MarketMakerReports.Core.Math;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.MarketMakerReports.Services.PnL;
 using Lykke.Service.MarketMakerReports.Services.Settings;
@@ -38,10 +37,6 @@ namespace Lykke.Service.MarketMakerReports.Services
             
             builder.RegisterType<AssetRealisedPnLService>()
                 .As<IAssetRealisedPnLService>()
-                .SingleInstance();
-            
-            builder.RegisterType<AssetRealisedPnLCalculator>()
-                .As<IAssetRealisedPnLCalculator>()
                 .SingleInstance();
         }
     }

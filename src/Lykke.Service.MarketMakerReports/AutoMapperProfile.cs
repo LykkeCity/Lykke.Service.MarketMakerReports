@@ -20,7 +20,7 @@ namespace Lykke.Service.MarketMakerReports
             CreateMap<Core.Domain.AuditMessages.AuditMessage, AuditMessageModel>(MemberList.Destination);
 
             CreateMap<InventorySnapshot, Core.Domain.InventorySnapshots.InventorySnapshot>(MemberList.None);
-            
+
             CreateMap<AssetBalanceInventory, Core.Domain.InventorySnapshots.AssetBalanceInventory>()
                 .ForMember(x => x.Balances, m => m.MapFrom(x => x.Balances ?? new List<AssetBalance>()))
                 .ForMember(x => x.Inventories, m => m.MapFrom(x => x.Inventories ?? new List<AssetInventory>()));
@@ -29,7 +29,7 @@ namespace Lykke.Service.MarketMakerReports
 
             CreateMap<Core.Domain.InventorySnapshots.AssetBalanceInventory, AssetBalanceInventoryModel>()
                 .ForMember(x => x.Asset, m => m.ResolveUsing(x => x.AssetDisplayId));
-            
+
             CreateMap<PnLResult, PnLResultModel>(MemberList.Destination);
 
             CreateMap<AssetPnL, AssetPnLModel>()
@@ -39,14 +39,14 @@ namespace Lykke.Service.MarketMakerReports
                 .ForMember(x => x.EndBalance, m => m.MapFrom(x => x.EndBalance.Balance))
                 .ForMember(x => x.EndBalanceInUsd, m => m.MapFrom(x => x.EndBalance.BalanceInUsd))
                 .ForMember(x => x.EndPrice, m => m.MapFrom(x => x.EndBalance.Price));
-            
-            CreateMap<LykkeTrade, LykkeTradeModel>(MemberList.Source)
-                .ForSourceMember(src => src.Exchange, opt => opt.Ignore());
-            
-            CreateMap<ExternalTrade, ExternalTradeModel>(MemberList.Source)
-                .ForSourceMember(src => src.Id, opt => opt.Ignore());
-            
+
+            CreateMap<LykkeTrade, LykkeTradeModel>(MemberList.Source);
+            CreateMap<ExternalTrade, ExternalTradeModel>(MemberList.Source);
+
             CreateMap<AssetRealisedPnL, AssetRealisedPnLModel>(MemberList.Source);
+
+            CreateMap<NettingEngine.Client.RabbitMq.Trades.LykkeTrade, LykkeTrade>(MemberList.Source);
+            CreateMap<NettingEngine.Client.RabbitMq.Trades.ExternalTrade, ExternalTrade>(MemberList.Source);
         }
     }
 }
