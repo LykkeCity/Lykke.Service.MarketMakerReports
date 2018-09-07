@@ -43,5 +43,19 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 _cache[assetRealisedPnL.WalletId][assetRealisedPnL.AssetId] = assetRealisedPnL;
             }
         }
+        
+        public void Initialize(AssetRealisedPnL assetRealisedPnL)
+        {
+            lock (_sync)
+            {
+                if (!_cache.ContainsKey(assetRealisedPnL.WalletId))
+                {
+                    _cache[assetRealisedPnL.WalletId] = new Dictionary<string, AssetRealisedPnL>
+                    {
+                        [assetRealisedPnL.AssetId] = assetRealisedPnL
+                    };
+                }
+            }
+        }
     }
 }

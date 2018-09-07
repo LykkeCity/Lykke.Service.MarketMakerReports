@@ -16,15 +16,11 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
             CreateMap<AuditMessage, AuditMessageEntity>(MemberList.Source);
             CreateMap<AuditMessageEntity, AuditMessage>(MemberList.Destination);
 
-            CreateMap<LykkeTrade, LykkeTradeEntity>(MemberList.Source)
-                .ForSourceMember(src => src.Exchange, opt => opt.Ignore());
-            CreateMap<LykkeTradeEntity, LykkeTrade>(MemberList.Destination)
-                .ForMember(dest => dest.Exchange, opt => opt.Ignore());
+            CreateMap<LykkeTrade, LykkeTradeEntity>(MemberList.Source);
+            CreateMap<LykkeTradeEntity, LykkeTrade>(MemberList.Destination);
             
-            CreateMap<ExternalTrade, ExternalTradeEntity>(MemberList.Source)
-                .ForSourceMember(src => src.Id, opt => opt.Ignore());
-            CreateMap<ExternalTradeEntity, ExternalTrade>(MemberList.Destination)
-                .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<ExternalTrade, ExternalTradeEntity>(MemberList.Source);
+            CreateMap<ExternalTradeEntity, ExternalTrade>(MemberList.Destination);
 
             CreateMap<HealthIssue, HealthIssueEntity>(MemberList.Source);
             CreateMap<HealthIssueEntity, HealthIssue>(MemberList.Destination);

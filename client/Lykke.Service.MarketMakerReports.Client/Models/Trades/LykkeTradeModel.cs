@@ -30,6 +30,8 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.Trades
         [JsonConverter(typeof (StringEnumConverter))]
         public TradeStatus Status { get; set; }
 
+        public string ClientId { get; set; }
+        
         public string OppositeClientId { get; set; }
 
         public string OppositeLimitOrderId { get; set; }
