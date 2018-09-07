@@ -55,6 +55,9 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
             {
                 WalletSettings walletSettings = await _walletSettingsService.GetWalletAsync(walletId);
 
+                if (walletSettings == null)
+                    return new AssetRealisedPnL[0];
+                
                 Task<AssetRealisedPnL>[] tasks = walletSettings.Assets
                     .Select(assetId => _assetRealisedPnLRepository.GetLastAsync(walletId, assetId))
                     .ToArray();
@@ -105,6 +108,7 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 Volume = lykkeTrade.Volume,
                 Type = lykkeTrade.Type,
                 Time = lykkeTrade.Time,
+                LimitOrderId = lykkeTrade.LimitOrderId,
                 OppositeClientId = lykkeTrade.OppositeClientId,
                 OppositeLimitOrderId = lykkeTrade.OppositeLimitOrderId
             };
@@ -142,6 +146,7 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 Volume = externalTrade.Volume,
                 Type = externalTrade.Type,
                 Time = externalTrade.Time,
+                LimitOrderId = externalTrade.OrderId,
                 OppositeClientId = null,
                 OppositeLimitOrderId = null
             };
@@ -183,6 +188,7 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 Volume = (decimal) amount,
                 Type = amount < 0 ? TradeType.Sell : TradeType.Buy,
                 Time = DateTime.UtcNow,
+                LimitOrderId = Guid.Empty.ToString("D"),
                 OppositeClientId = null,
                 OppositeLimitOrderId = null
             };
@@ -267,6 +273,7 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 CumulativeRealisedPnL = cumulativeRealisedPnL,
                 UnrealisedPnL = unrealisedPnL,
                 
+                LimitOrderId = tradeData.LimitOrderId,
                 OppositeClientId = tradeData.OppositeClientId,
                 OppositeLimitOrderId = tradeData.OppositeLimitOrderId
             };

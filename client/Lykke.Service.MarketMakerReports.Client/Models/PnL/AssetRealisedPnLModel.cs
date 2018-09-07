@@ -136,6 +136,11 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
         public decimal UnrealisedPnL { get; set; }
         
         /// <summary>
+        /// The limit order id that was executed.
+        /// </summary>
+        public string LimitOrderId { get; set; }
+        
+        /// <summary>
         /// The opposite client id.
         /// </summary>
         /// <remarks>
