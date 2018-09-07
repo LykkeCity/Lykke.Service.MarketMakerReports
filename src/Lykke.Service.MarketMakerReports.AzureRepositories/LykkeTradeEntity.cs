@@ -38,6 +38,8 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
 
         public TradeStatus Status { get; set; }
 
+        public string ClientId { get; set; }
+        
         public string OppositeClientId { get; set; }
 
         public string OppositeLimitOrderId { get; set; }
