@@ -173,6 +173,9 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
         
         public async Task InitializeAsync(string walletId, string assetId, double amount)
         {
+            if(System.Math.Abs(amount) <= Double.Epsilon)
+                return;
+            
             MarketProfile marketProfile = await _rateCalculatorClient.GetMarketProfileAsync();
             
             Quote quote = await GetQuoteAsync(marketProfile, assetId, QuoteAssetId);
