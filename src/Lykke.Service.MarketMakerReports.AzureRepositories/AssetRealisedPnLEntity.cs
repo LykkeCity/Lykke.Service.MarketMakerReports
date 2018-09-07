@@ -68,6 +68,8 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
 
         public decimal UnrealisedPnL { get; set; }
         
+        public string LimitOrderId { get; set; }
+        
         public string OppositeClientId { get; set; }
         
         public string OppositeLimitOrderId { get; set; }
