@@ -9,25 +9,25 @@ namespace Lykke.Service.MarketMakerReports.Client.Api
     [PublicAPI]
     public interface IRealisedPnLSettingsApi
     {
-        [Get("/api/realisedpnlsettigns/wallets")]
+        [Get("/api/realisedpnlsettings/wallets")]
         Task<IReadOnlyCollection<WalletSettingsModel>> GetWalletsAsync();
 
-        [Get("/api/realisedpnlsettigns/wallets/{walletId}")]
+        [Get("/api/realisedpnlsettings/wallets/{walletId}")]
         Task<WalletSettingsModel> GetWalletAsync(string walletId);
         
-        [Post("/api/realisedpnlsettigns/wallets")]
+        [Post("/api/realisedpnlsettings/wallets")]
         Task AddWalletAsync(WalletSettingsModel walletSettingsModel);
         
-        [Post("/api/realisedpnlsettigns/assets")]
+        [Post("/api/realisedpnlsettings/assets")]
         Task AddAssetToWalletAsync(AssetSettingsModel assetSettingsModel);
         
-        [Put("/api/realisedpnlsettigns/wallets")]
+        [Put("/api/realisedpnlsettings/wallets")]
         Task UpdateWalletAsync(WalletSettingsModel walletSettingsModel);
         
-        [Delete("/api/realisedpnlsettigns/wallets/{walletId}")]
+        [Delete("/api/realisedpnlsettings/wallets/{walletId}")]
         Task DeleteWalletAsync(string walletId);
         
-        [Delete("/api/realisedpnlsettigns/wallets/{walletId}/assets/{assetId}")]
+        [Delete("/api/realisedpnlsettings/wallets/{walletId}/assets/{assetId}")]
         Task RemoveAssetFromWalletAsync(string walletId, string assetId);
     }
 }

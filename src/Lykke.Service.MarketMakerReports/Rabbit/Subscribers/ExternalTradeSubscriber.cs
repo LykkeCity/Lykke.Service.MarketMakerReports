@@ -55,8 +55,9 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
             try
             {
                 var model = Mapper.Map<Core.Domain.Trades.ExternalTrade>(message);
-                await _externalTradeService.HandleAsync(model);
-                await _assetRealisedPnLService.CalculateAsync(model);
+                await Task.WhenAll(
+                    _externalTradeService.HandleAsync(model),
+                    _assetRealisedPnLService.CalculateAsync(model));
             }
             catch (Exception exception)
             {
