@@ -78,7 +78,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Settings
         {
             WalletSettings currentWalletSettings = await GetWalletAsync(walletSettings.Id);
             
-            if(walletSettings == null)
+            if(currentWalletSettings == null)
                 throw new InvalidOperationException("Wallet settings not found");
             
             currentWalletSettings.Update(walletSettings);
