@@ -44,17 +44,12 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
             }
         }
 
-        public void Initialize(IReadOnlyCollection<AssetRealisedPnL> assetsRealisedPnL)
+        public void Initialize(string walletId, IReadOnlyCollection<AssetRealisedPnL> assetsRealisedPnL)
         {
             lock (_sync)
             {
-                foreach (IGrouping<string, AssetRealisedPnL> group in assetsRealisedPnL.GroupBy(o => o.WalletId))
-                {
-                    if (!_cache.ContainsKey(group.Key))
-                    {
-                        _cache[group.Key] = group.ToDictionary(o => o.AssetId);
-                    }
-                }
+                if (!_cache.ContainsKey(walletId))
+                    _cache[walletId] = assetsRealisedPnL.ToDictionary(o => o.AssetId);
             }
         }
     }

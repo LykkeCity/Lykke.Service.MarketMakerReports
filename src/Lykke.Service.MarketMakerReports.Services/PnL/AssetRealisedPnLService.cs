@@ -66,7 +66,7 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
 
                 assetsRealisedPnL = tasks.Select(task => task.Result).ToArray();
 
-                _cache.Initialize(assetsRealisedPnL);
+                _cache.Initialize(walletId, assetsRealisedPnL);
                 
                 assetsRealisedPnL = _cache.Get(walletId);
             }
