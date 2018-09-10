@@ -64,7 +64,7 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
 
         public async Task InsertAsync(AssetRealisedPnL assetRealisedPnL)
         {
-            var entity = new AssetRealisedPnLEntity(GetPartitionKey(assetRealisedPnL.AssetId),
+            var entity = new AssetRealisedPnLEntity(GetPartitionKey(assetRealisedPnL.WalletId),
                 GetRowKey(assetRealisedPnL.Time));
 
             Mapper.Map(assetRealisedPnL, entity);
