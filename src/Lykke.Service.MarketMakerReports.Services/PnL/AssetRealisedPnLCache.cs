@@ -7,7 +7,7 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
     public class AssetRealisedPnLCache
     {
         private readonly object _sync = new object();
-        
+
         private readonly Dictionary<string, Dictionary<string, AssetRealisedPnL>> _cache =
             new Dictionary<string, Dictionary<string, AssetRealisedPnL>>();
 
@@ -37,23 +37,23 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
         {
             lock (_sync)
             {
-                if(!_cache.ContainsKey(assetRealisedPnL.WalletId))
+                if (!_cache.ContainsKey(assetRealisedPnL.WalletId))
                     _cache[assetRealisedPnL.WalletId] = new Dictionary<string, AssetRealisedPnL>();
-                
+
                 _cache[assetRealisedPnL.WalletId][assetRealisedPnL.AssetId] = assetRealisedPnL;
             }
         }
-        
-        public void Initialize(AssetRealisedPnL assetRealisedPnL)
+
+        public void Initialize(IReadOnlyCollection<AssetRealisedPnL> assetsRealisedPnL)
         {
             lock (_sync)
             {
-                if (!_cache.ContainsKey(assetRealisedPnL.WalletId))
+                foreach (IGrouping<string, AssetRealisedPnL> group in assetsRealisedPnL.GroupBy(o => o.WalletId))
                 {
-                    _cache[assetRealisedPnL.WalletId] = new Dictionary<string, AssetRealisedPnL>
+                    if (!_cache.ContainsKey(group.Key))
                     {
-                        [assetRealisedPnL.AssetId] = assetRealisedPnL
-                    };
+                        _cache[group.Key] = group.ToDictionary(o => o.AssetId);
+                    }
                 }
             }
         }

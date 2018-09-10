@@ -49,9 +49,9 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
 
         public async Task<IReadOnlyCollection<AssetRealisedPnL>> GetLastAsync(string walletId)
         {
-            IReadOnlyCollection<AssetRealisedPnL> assetRealisedPnLs = _cache.Get(walletId);
+            IReadOnlyCollection<AssetRealisedPnL> assetsRealisedPnL = _cache.Get(walletId);
 
-            if (assetRealisedPnLs == null)
+            if (assetsRealisedPnL == null)
             {
                 WalletSettings walletSettings = await _walletSettingsService.GetWalletAsync(walletId);
 
@@ -64,15 +64,14 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
 
                 await Task.WhenAll(tasks);
 
-                assetRealisedPnLs = tasks.Select(task => task.Result).ToArray();
+                assetsRealisedPnL = tasks.Select(task => task.Result).ToArray();
 
-                foreach (AssetRealisedPnL assetRealisedPnL in assetRealisedPnLs)
-                    _cache.Initialize(assetRealisedPnL);
+                _cache.Initialize(assetsRealisedPnL);
                 
-                assetRealisedPnLs = _cache.Get(walletId);
+                assetsRealisedPnL = _cache.Get(walletId);
             }
 
-            return assetRealisedPnLs;
+            return assetsRealisedPnL;
         }
 
         public Task<IReadOnlyCollection<AssetRealisedPnL>> GetByAssetAsync(string walletId, string assetId,
