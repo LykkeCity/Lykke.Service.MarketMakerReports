@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Lykke.AzureStorage.Tables;
 using Lykke.AzureStorage.Tables.Entity.Annotation;
+using Lykke.AzureStorage.Tables.Entity.ValueTypesMerging;
 
 namespace Lykke.Service.MarketMakerReports.AzureRepositories
 {
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+    [ValueTypeMergingStrategy(ValueTypeMergingStrategy.UpdateAlways)]
     public class WalletSettingsEntity : AzureTableEntity
     {
         public WalletSettingsEntity()
