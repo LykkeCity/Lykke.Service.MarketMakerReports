@@ -41,11 +41,8 @@ namespace Lykke.Service.MarketMakerReports.AzureRepositories
 
         public async Task UpdateAsync(WalletSettings walletSettings)
         {
-            var entity = new WalletSettingsEntity(GetPartitionKey(), GetRowKey(walletSettings.Id));
-
-            Mapper.Map(walletSettings, entity);
-
-            await _storage.ReplaceAsync(entity);
+            await _storage.MergeAsync(GetPartitionKey(), GetRowKey(walletSettings.Id),
+                entity => Mapper.Map(walletSettings, entity));
         }
 
         public Task DeleteAsync(string walletId)
