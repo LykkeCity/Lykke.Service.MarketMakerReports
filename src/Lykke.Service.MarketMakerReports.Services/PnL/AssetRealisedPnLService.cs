@@ -11,6 +11,7 @@ using Lykke.Service.MarketMakerReports.Core.Domain;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 using Lykke.Service.MarketMakerReports.Core.Domain.Settings;
 using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
+using Lykke.Service.MarketMakerReports.Core.Extensions;
 using Lykke.Service.MarketMakerReports.Core.Repositories;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.MarketMakerReports.Services.Math;
@@ -123,6 +124,8 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
 
                 _cache.Set(assetRealisedPnL);
             }
+            
+            _log.InfoWithDetails("Lykke trade handled", tradeData);
         }
 
         public async Task CalculateAsync(ExternalTrade externalTrade)
@@ -168,6 +171,8 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                     _cache.Set(assetRealisedPnL);
                 }
             }
+            
+            _log.InfoWithDetails("External trade handled", tradeData);
         }
         
         public async Task InitializeAsync(string walletId, string assetId, double amount)
@@ -198,6 +203,8 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
             AssetRealisedPnL assetRealisedPnL = await CalculateAsync(tradeData, walletId, assetId, marketProfile);
 
             await _assetRealisedPnLRepository.InsertAsync(assetRealisedPnL);
+
+            _log.InfoWithDetails("Realised PnL initialized", new {walletId, assetId, amount});
             
             _cache.Set(assetRealisedPnL);
         }
