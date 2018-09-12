@@ -3,13 +3,13 @@ using Lykke.Service.MarketMakerReports.Core.Domain.Settings;
 
 namespace Lykke.Service.MarketMakerReports.Services.Settings
 {
-    public class RealisedPnLSettingsCache
+    public class WalletSettingsCache
     {
         private readonly object _sync = new object();
 
         private readonly Dictionary<string, WalletSettings> _wallets = new Dictionary<string, WalletSettings>();
 
-        public IReadOnlyCollection<WalletSettings> GetWallets()
+        public IReadOnlyCollection<WalletSettings> Get()
         {
             lock (_sync)
             {
@@ -17,7 +17,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Settings
             }
         }
 
-        public WalletSettings GetWallet(string walletId)
+        public WalletSettings Get(string walletId)
         {
             lock (_sync)
             {
