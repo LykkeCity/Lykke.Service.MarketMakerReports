@@ -10,7 +10,9 @@ namespace Lykke.Service.MarketMakerReports.Core.Repositories
         
         Task<WalletSettings> GetByIdAsync(string walletId);
 
-        Task SaveAsync(WalletSettings walletSettings);
+        Task InsertAsync(WalletSettings walletSettings);
+        
+        Task UpdateAsync(WalletSettings walletSettings);
         
         Task DeleteAsync(string walletId);
     }
