@@ -101,7 +101,7 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
 
             var tradeData = new TradeData
             {
-                Id = Guid.Empty.ToString("D"),
+                Id = lykkeTrade.Id,
                 Exchange = ExchangeNames.Lykke,
                 AssetPair = assetPair.Id,
                 BaseAsset = assetPair.BaseAssetId,
