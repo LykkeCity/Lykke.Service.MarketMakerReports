@@ -255,7 +255,8 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests
             string expectedDynamics =
                 "{"
                 + "  \"Source\": \"Default\","
-                + "  \"Timestamp\": \"2018-08-08T14:28:17.7350053+07:00\","
+                + "  \"StartDate\": \"2018-08-07T14:28:17.7350053+07:00\","
+                + "  \"EndDate\": \"2018-08-08T14:28:17.7350053+07:00\","
                 + "  \"Assets\": ["
                 + "    {"
                 + "      \"Asset\": \"LKK\","
