@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Common;
 using Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,7 +34,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests
             var startSnapshot = new InventorySnapshot
             {
                 Source = "Default",
-                Timestamp = DateTime.Parse("2018-08-07T07:28:17.7350053Z"),
+                Timestamp = DateTime.Parse("2018-08-07T07:28:17.7350053Z", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
                 Assets = new[]
                 {
                     new AssetBalanceInventory
@@ -143,7 +144,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests
             var endSnapshot = new InventorySnapshot
             {
                 Source = "Default",
-                Timestamp = DateTime.Parse("2018-08-08T07:28:17.7350053Z"),
+                Timestamp = DateTime.Parse("2018-08-08T07:28:17.7350053Z", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
                 Assets = new[]
                 {
                     new AssetBalanceInventory
@@ -255,8 +256,8 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests
             string expectedDynamics =
                 "{"
                 + "  \"Source\": \"Default\","
-                + "  \"StartDate\": \"2018-08-07T14:28:17.7350053+07:00\","
-                + "  \"EndDate\": \"2018-08-08T14:28:17.7350053+07:00\","
+                + "  \"StartDate\": \"2018-08-07T07:28:17.7350053Z\","
+                + "  \"EndDate\": \"2018-08-08T07:28:17.7350053Z\","
                 + "  \"Assets\": ["
                 + "    {"
                 + "      \"Asset\": \"LKK\","
@@ -406,8 +407,6 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests
                 + "    }"
                 + "  ]"
                 + "}";
-
-
 
             Assert.AreEqual(expectedDynamics.Replace(" ", ""), dynamics.ToJson());
         }
