@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AutoMapper;
 using Lykke.Service.MarketMakerReports.Client.Models.AuditMessages;
 using Lykke.Service.MarketMakerReports.Client.Models.Health;
@@ -29,6 +29,8 @@ namespace Lykke.Service.MarketMakerReports
                 .ForMember(x => x.Inventories, m => m.MapFrom(x => x.Inventories ?? new List<AssetInventory>()));
 
             CreateMap<Core.Domain.InventorySnapshots.InventorySnapshot, InventorySnapshotModel>(MemberList.Destination);
+
+            CreateMap<Core.Domain.InventorySnapshots.InventorySnapshot, InventorySnapshotBriefModel>(MemberList.Destination);
 
             CreateMap<Core.Domain.InventorySnapshots.AssetBalanceInventory, AssetBalanceInventoryModel>()
                 .ForMember(x => x.Asset, m => m.MapFrom(x => x.AssetDisplayId ?? x.AssetId));
