@@ -1,10 +1,12 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AutoMapper;
 using Lykke.Service.MarketMakerReports.Client.Models.AuditMessages;
 using Lykke.Service.MarketMakerReports.Client.Models.InventorySnapshots;
 using Lykke.Service.MarketMakerReports.Client.Models.PnL;
+using Lykke.Service.MarketMakerReports.Client.Models.RealisedPnLSettings;
 using Lykke.Service.MarketMakerReports.Client.Models.Trades;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
+using Lykke.Service.MarketMakerReports.Core.Domain.Settings;
 using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
 using Lykke.Service.NettingEngine.Client.RabbitMq;
 using Lykke.Service.NettingEngine.Client.RabbitMq.InventorySnapshots;
@@ -44,7 +46,11 @@ namespace Lykke.Service.MarketMakerReports
             CreateMap<ExternalTrade, ExternalTradeModel>(MemberList.Source);
 
             CreateMap<AssetRealisedPnL, AssetRealisedPnLModel>(MemberList.Source);
-
+            
+            CreateMap<WalletSettings, WalletSettingsModel>(MemberList.Source);
+            CreateMap<WalletSettingsModel, WalletSettings>(MemberList.Destination)
+                .ForMember(dest => dest.Assets, opt => opt.Ignore());
+            
             CreateMap<NettingEngine.Client.RabbitMq.Trades.LykkeTrade, LykkeTrade>(MemberList.Source);
             CreateMap<NettingEngine.Client.RabbitMq.Trades.ExternalTrade, ExternalTrade>(MemberList.Source);
         }
