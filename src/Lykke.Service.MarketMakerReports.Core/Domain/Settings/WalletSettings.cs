@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -5,6 +6,8 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.Settings
 {
     public class WalletSettings
     {
+        private IReadOnlyCollection<string> _assets;
+
         public string Id { get; set; }
 
         public string Name { get; set; }
@@ -13,18 +16,22 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.Settings
 
         public bool HandleExternalTrades { get; set; }
 
-        public IReadOnlyCollection<string> Assets { get; set; }
+        public IReadOnlyCollection<string> Assets
+        {
+            get => _assets ?? new string[0];
+            set => _assets = value;
+        }
 
         public void AddAsset(string assetId)
         {
-            Assets = (Assets ?? new string[0])
+            Assets = Assets
                 .Union(new[] {assetId})
                 .ToArray();
         }
 
         public void RemoveAsset(string assetId)
         {
-            Assets = (Assets ?? new string[0])
+            Assets = Assets
                 .Except(new[] {assetId})
                 .ToArray();
         }
