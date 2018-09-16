@@ -14,14 +14,14 @@ namespace Lykke.Service.MarketMakerReports.Controllers
     public class RealisedPnLSettingsController : Controller, IRealisedPnLSettingsApi
     {
         private readonly IWalletSettingsService _walletSettingsService;
-        private readonly IAssetRealisedPnLService _assetRealisedPnLService;
+        private readonly IRealisedPnLService _realisedPnLService;
 
         public RealisedPnLSettingsController(
             IWalletSettingsService walletSettingsService,
-            IAssetRealisedPnLService assetRealisedPnLService)
+            IRealisedPnLService realisedPnLService)
         {
             _walletSettingsService = walletSettingsService;
-            _assetRealisedPnLService = assetRealisedPnLService;
+            _realisedPnLService = realisedPnLService;
         }
 
         /// <response code="200">A collection of settings of wallets.</response>
@@ -61,7 +61,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         {
             await _walletSettingsService.AddAssetToWalletAsync(assetSettingsModel.WalletId, assetSettingsModel.Id);
 
-            await _assetRealisedPnLService.InitializeAsync(assetSettingsModel.WalletId, assetSettingsModel.Id,
+            await _realisedPnLService.InitializeAsync(assetSettingsModel.WalletId, assetSettingsModel.Id,
                 assetSettingsModel.Amount);
         }
 

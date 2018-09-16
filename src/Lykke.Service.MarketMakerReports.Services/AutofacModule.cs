@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using JetBrains.Annotations;
 using Lykke.Service.MarketMakerReports.Core.Services;
-using Lykke.Service.MarketMakerReports.Services.PnL;
+using Lykke.Service.MarketMakerReports.Services.RealisedPnL;
 using Lykke.Service.MarketMakerReports.Services.Settings;
 
 namespace Lykke.Service.MarketMakerReports.Services
@@ -38,8 +38,12 @@ namespace Lykke.Service.MarketMakerReports.Services
                 .As<IHealthMonitorService>()
                 .SingleInstance();
             
-            builder.RegisterType<AssetRealisedPnLService>()
-                .As<IAssetRealisedPnLService>()
+            builder.RegisterType<RealisedPnLService>()
+                .As<IRealisedPnLService>()
+                .SingleInstance();
+            
+            builder.RegisterType<QuoteService>()
+                .As<IQuoteService>()
                 .SingleInstance();
         }
     }

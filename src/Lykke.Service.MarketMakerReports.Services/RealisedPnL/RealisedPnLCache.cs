@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 
-namespace Lykke.Service.MarketMakerReports.Services.PnL
+namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
 {
-    public class AssetRealisedPnLCache
+    public class RealisedPnLCache
     {
         private readonly object _sync = new object();
 
