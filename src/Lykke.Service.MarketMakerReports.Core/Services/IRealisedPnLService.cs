@@ -6,7 +6,7 @@ using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
 
 namespace Lykke.Service.MarketMakerReports.Core.Services
 {
-    public interface IAssetRealisedPnLService
+    public interface IRealisedPnLService
     {
         Task<IReadOnlyCollection<AssetRealisedPnL>> GetLastAsync(string walletId);
 
