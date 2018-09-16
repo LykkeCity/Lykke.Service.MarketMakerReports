@@ -3,6 +3,8 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
     public struct RealisedPnLResult
     {
         public decimal AvgPrice { get; set; }
+
+        public decimal CloseRate { get; set; }
         
         public decimal Volume { get; set; }
 

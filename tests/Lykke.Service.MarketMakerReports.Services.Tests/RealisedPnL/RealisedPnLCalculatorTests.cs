@@ -19,12 +19,12 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             decimal prevCumulativeVolume = 0;
             decimal prevCumulativeOppositeVolume = 0;
             decimal openRate = 0;
-            decimal closeRate = 6543.40m;
             decimal crossRate = 1;
             
             var expectedResult = new RealisedPnLResult
             {
-                AvgPrice = closeRate,
+                AvgPrice = tradePrice,
+                CloseRate = tradePrice,
                 Volume = tradeVolume,
                 OppositeVolume = tradeVolume * tradePrice,
                 CumulativeVolume = tradeVolume,
@@ -44,7 +44,6 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
                 openRate,
-                closeRate,
                 crossRate);
 
             // assert
@@ -64,11 +63,11 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             decimal prevCumulativeVolume = 10;
             decimal prevCumulativeOppositeVolume = -65434.00m;
             decimal openRate = 6543.40m;
-            decimal closeRate = 6545.88m;
             decimal crossRate = 1.16m;
 
             var expectedResult = new RealisedPnLResult
             {
+                CloseRate = tradePrice * crossRate,
                 Volume = tradeVolume,
                 OppositeVolume = tradeVolume * tradePrice * crossRate,
                 CumulativeVolume = prevCumulativeVolume + tradeVolume,
@@ -81,7 +80,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             expectedResult.AvgPrice =
                 Math.Abs(expectedResult.CumulativeOppositeVolume / expectedResult.CumulativeVolume);
             
-            expectedResult.UnrealisedPnL = (closeRate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
+            expectedResult.UnrealisedPnL = (expectedResult.CloseRate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
             
             // act
 
@@ -93,7 +92,6 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
                 openRate,
-                closeRate,
                 crossRate);
 
             // assert
@@ -113,12 +111,12 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             decimal prevCumulativeVolume = 11;
             decimal prevCumulativeOppositeVolume = -71939.13m;
             decimal openRate = 6539.92m;
-            decimal closeRate = 6545.70m;
             decimal crossRate = 1m;
             
             var expectedResult = new RealisedPnLResult
             {
                 AvgPrice = openRate,
+                CloseRate = tradePrice * crossRate,
                 Volume = tradeVolume,
                 OppositeVolume = tradeVolume * tradePrice * crossRate,
                 CumulativeVolume = prevCumulativeVolume - tradeVolume,
@@ -126,9 +124,9 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 ClosedVolume = tradeVolume
             };
 
-            expectedResult.RealisedPnL = (closeRate - openRate) * expectedResult.ClosedVolume;
+            expectedResult.RealisedPnL = (expectedResult.CloseRate - openRate) * expectedResult.ClosedVolume;
             
-            expectedResult.UnrealisedPnL = (closeRate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
+            expectedResult.UnrealisedPnL = (expectedResult.CloseRate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
             
             // act
 
@@ -140,7 +138,6 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
                 openRate,
-                closeRate,
                 crossRate);
 
             // assert
@@ -160,20 +157,22 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             decimal prevCumulativeVolume = 5;
             decimal prevCumulativeOppositeVolume = -32699.61m;
             decimal openRate = 6539.92m;
-            decimal closeRate = 6545.05m;
             decimal crossRate = 1m;
             
             var expectedResult = new RealisedPnLResult
             {
-                AvgPrice = closeRate,
+                AvgPrice = tradePrice * crossRate,
+                CloseRate = tradePrice * crossRate,
                 Volume = tradeVolume,
                 OppositeVolume = tradeVolume * tradePrice * crossRate,
                 CumulativeVolume = prevCumulativeVolume - tradeVolume,
-                CumulativeOppositeVolume = (prevCumulativeVolume - tradeVolume) * closeRate * -1 * direction,
                 ClosedVolume = prevCumulativeVolume
             };
 
-            expectedResult.RealisedPnL = (closeRate - openRate) * expectedResult.ClosedVolume;
+            expectedResult.CumulativeOppositeVolume =
+                (tradeVolume - prevCumulativeVolume) * expectedResult.CloseRate * -1 * direction;
+            
+            expectedResult.RealisedPnL = (expectedResult.CloseRate - openRate) * expectedResult.ClosedVolume;
             
             expectedResult.UnrealisedPnL = 0;
             
@@ -187,7 +186,6 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
                 openRate,
-                closeRate,
                 crossRate);
 
             // assert
@@ -198,6 +196,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
         private static bool AreEqual(RealisedPnLResult a, RealisedPnLResult b)
         {
             return a.AvgPrice == b.AvgPrice &&
+                   a.CloseRate == b.CloseRate &&
                    a.Volume == b.Volume &&
                    a.OppositeVolume == b.OppositeVolume &&
                    a.CumulativeVolume == b.CumulativeVolume &&
