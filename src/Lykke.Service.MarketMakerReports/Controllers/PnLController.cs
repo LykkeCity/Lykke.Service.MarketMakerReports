@@ -15,12 +15,12 @@ namespace Lykke.Service.MarketMakerReports.Controllers
     public class PnLController : Controller, IPnLApi
     {
         private readonly IPnLService _pnLService;
-        private readonly IAssetRealisedPnLService _assetRealisedPnLService;
+        private readonly IRealisedPnLService _realisedPnLService;
 
-        public PnLController(IPnLService pnLService, IAssetRealisedPnLService assetRealisedPnLService)
+        public PnLController(IPnLService pnLService, IRealisedPnLService realisedPnLService)
         {
             _pnLService = pnLService;
-            _assetRealisedPnLService = assetRealisedPnLService;
+            _realisedPnLService = realisedPnLService;
         }
 
         [HttpGet]
@@ -62,7 +62,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
         public async Task<IReadOnlyList<AssetRealisedPnLModel>> GetLastRealisedPnlAsync(string walletId)
         {
             IReadOnlyCollection<AssetRealisedPnL> assetRealisedPnL =
-                await _assetRealisedPnLService.GetLastAsync(walletId);
+                await _realisedPnLService.GetLastAsync(walletId);
 
             var model = Mapper.Map<List<AssetRealisedPnLModel>>(assetRealisedPnL);
 
@@ -76,7 +76,7 @@ namespace Lykke.Service.MarketMakerReports.Controllers
             DateTime date, int? limit)
         {
             IReadOnlyCollection<AssetRealisedPnL> assetRealisedPnL =
-                await _assetRealisedPnLService.GetByAssetAsync(walletId, assetId, date, limit);
+                await _realisedPnLService.GetByAssetAsync(walletId, assetId, date, limit);
 
             var model = Mapper.Map<List<AssetRealisedPnLModel>>(assetRealisedPnL);
 

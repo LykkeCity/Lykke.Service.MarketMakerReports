@@ -17,7 +17,7 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
         private readonly ILogFactory _logFactory;
         private readonly ExchangeSettings _settings;
         private readonly IExternalTradeService _externalTradeService;
-        private readonly IAssetRealisedPnLService _assetRealisedPnLService;
+        private readonly IRealisedPnLService _realisedPnLService;
         private readonly ILog _log;
     
         private RabbitMqSubscriber<ExternalTrade> _subscriber;
@@ -25,13 +25,13 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
         public ExternalTradeSubscriber(ILogFactory logFactory,
             ExchangeSettings exchangeSettings,
             IExternalTradeService externalTradeService,
-            IAssetRealisedPnLService assetRealisedPnLService)
+            IRealisedPnLService realisedPnLService)
         {
             _log = logFactory.CreateLog(this);
             _logFactory = logFactory;
             _settings = exchangeSettings;
             _externalTradeService = externalTradeService;
-            _assetRealisedPnLService = assetRealisedPnLService;
+            _realisedPnLService = realisedPnLService;
         }
 
         public void Start()
@@ -58,7 +58,7 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
                 var model = Mapper.Map<Core.Domain.Trades.ExternalTrade>(message);
                 await Task.WhenAll(
                     _externalTradeService.HandleAsync(model),
-                    _assetRealisedPnLService.CalculateAsync(model));
+                    _realisedPnLService.CalculateAsync(model));
             }
             catch (Exception exception)
             {

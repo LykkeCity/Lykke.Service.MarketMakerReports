@@ -1,7 +1,7 @@
 using System;
 using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
 
-namespace Lykke.Service.MarketMakerReports.Services.PnL
+namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
 {
     public class TradeData
     {

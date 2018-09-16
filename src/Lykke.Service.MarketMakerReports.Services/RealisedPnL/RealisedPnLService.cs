@@ -14,38 +14,37 @@ using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
 using Lykke.Service.MarketMakerReports.Core.Extensions;
 using Lykke.Service.MarketMakerReports.Core.Repositories;
 using Lykke.Service.MarketMakerReports.Core.Services;
-using Lykke.Service.MarketMakerReports.Services.Math;
-using Lykke.Service.RateCalculator.Client;
-using Lykke.Service.RateCalculator.Client.AutorestClient.Models;
 using AssetPair = Lykke.Service.Assets.Client.Models.AssetPair;
 
-namespace Lykke.Service.MarketMakerReports.Services.PnL
+namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
 {
     [UsedImplicitly]
-    public class AssetRealisedPnLService : IAssetRealisedPnLService
+    public class RealisedPnLService : IRealisedPnLService
     {
         private const string QuoteAssetId = "USD";
 
         private readonly IAssetRealisedPnLRepository _assetRealisedPnLRepository;
         private readonly IWalletSettingsService _walletSettingsService;
-        private readonly IRateCalculatorClient _rateCalculatorClient;
         private readonly IAssetsServiceWithCache _assetsServiceWithCache;
+        private readonly IQuoteService _quoteService;
         private readonly ILog _log;
 
-        private readonly AssetRealisedPnLCache _cache = new AssetRealisedPnLCache();
+        private readonly RealisedPnLCache _cache;
 
-        public AssetRealisedPnLService(
+        public RealisedPnLService(
             IAssetRealisedPnLRepository assetRealisedPnLRepository,
             IWalletSettingsService walletSettingsService,
-            IRateCalculatorClient rateCalculatorClient,
             IAssetsServiceWithCache assetsServiceWithCache,
+            IQuoteService quoteService,
             ILogFactory logFactory)
         {
             _assetRealisedPnLRepository = assetRealisedPnLRepository;
             _walletSettingsService = walletSettingsService;
-            _rateCalculatorClient = rateCalculatorClient;
             _assetsServiceWithCache = assetsServiceWithCache;
+            _quoteService = quoteService;
             _log = logFactory.CreateLog(this);
+            
+            _cache = new RealisedPnLCache();
         }
 
         public async Task<IReadOnlyCollection<AssetRealisedPnL>> GetLastAsync(string walletId)
@@ -115,12 +114,10 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 OppositeLimitOrderId = lykkeTrade.OppositeLimitOrderId
             };
 
-            MarketProfile marketProfile = await _rateCalculatorClient.GetMarketProfileAsync();
-
             foreach (string assetId in assets)
             {
                 AssetRealisedPnL assetRealisedPnL =
-                    await CalculateAsync(tradeData, walletSettings.Id, assetId, marketProfile);
+                    await CalculateAsync(tradeData, walletSettings.Id, assetId);
 
                 await _assetRealisedPnLRepository.InsertAsync(assetRealisedPnL);
 
@@ -155,8 +152,6 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 OppositeLimitOrderId = null
             };
 
-            MarketProfile marketProfile = await _rateCalculatorClient.GetMarketProfileAsync();
-
             foreach (WalletSettings walletSettings in walletsSettings)
             {
                 string[] assets = walletSettings.Assets
@@ -166,7 +161,7 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 foreach (string assetId in assets)
                 {
                     AssetRealisedPnL assetRealisedPnL =
-                        await CalculateAsync(tradeData, walletSettings.Id, assetId, marketProfile);
+                        await CalculateAsync(tradeData, walletSettings.Id, assetId);
 
                     await _assetRealisedPnLRepository.InsertAsync(assetRealisedPnL);
 
@@ -179,12 +174,10 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
 
         public async Task InitializeAsync(string walletId, string assetId, double amount)
         {
-            if (System.Math.Abs(amount) <= Double.Epsilon)
+            if (Math.Abs(amount) <= Double.Epsilon)
                 return;
 
-            MarketProfile marketProfile = await _rateCalculatorClient.GetMarketProfileAsync();
-
-            Quote quote = await GetQuoteAsync(marketProfile, assetId, QuoteAssetId);
+            Quote quote = await _quoteService.GetAsync(assetId, QuoteAssetId);
 
             var tradeData = new TradeData
             {
@@ -202,7 +195,7 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 OppositeLimitOrderId = null
             };
 
-            AssetRealisedPnL assetRealisedPnL = await CalculateAsync(tradeData, walletId, assetId, marketProfile);
+            AssetRealisedPnL assetRealisedPnL = await CalculateAsync(tradeData, walletId, assetId);
 
             await _assetRealisedPnLRepository.InsertAsync(assetRealisedPnL);
 
@@ -211,46 +204,31 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
             _cache.Set(assetRealisedPnL);
         }
 
-        private async Task<AssetRealisedPnL> CalculateAsync(TradeData tradeData, string walletId, string assetId,
-            MarketProfile marketProfile)
+        private async Task<AssetRealisedPnL> CalculateAsync(TradeData tradeData, string walletId, string assetId)
         {
             AssetRealisedPnL prevAssetPnL = await _assetRealisedPnLRepository.GetLastAsync(walletId, assetId) ??
                                             new AssetRealisedPnL();
-
+            
             bool inverted = tradeData.QuoteAsset == assetId;
 
             string crossAssetId = inverted
                 ? tradeData.BaseAsset
                 : tradeData.QuoteAsset;
 
-            Quote quote = await GetQuoteAsync(marketProfile, assetId, QuoteAssetId);
-            Quote crossQuote = await GetQuoteAsync(marketProfile, crossAssetId, QuoteAssetId);
+            Quote quote = await _quoteService.GetAsync(assetId, QuoteAssetId);
+            Quote crossQuote = await _quoteService.GetAsync(crossAssetId, QuoteAssetId);
 
-            decimal volume = inverted
-                ? tradeData.Price * tradeData.Volume
-                : tradeData.Volume;
-
-            decimal oppositeVolume = inverted
-                ? tradeData.Volume * crossQuote.Mid
-                : tradeData.Price * tradeData.Volume * crossQuote.Mid;
-
-            RealisedPnLResult realisedPnLResult = Math.PnL.CalculateRealisedPnl(
-                volume,
-                oppositeVolume,
-                prevAssetPnL.AvgPrice,
+            RealisedPnLResult realisedPnLResult = RealisedPnLCalculator.Calculate(
+                tradeData.Price,
+                tradeData.Volume,
+                inverted,
+                tradeData.Type == TradeType.Sell ? -1 : 1,
                 prevAssetPnL.CumulativeVolume,
                 prevAssetPnL.CumulativeOppositeVolume,
                 prevAssetPnL.AvgPrice,
                 quote.Mid,
-                tradeData.Type == TradeType.Sell ? -1 : 1);
-
-            decimal avgPrice = realisedPnLResult.CumulativeVolume != 0
-                ? realisedPnLResult.CumulativeOppositeVolume / realisedPnLResult.CumulativeVolume
-                : 0;
-
-            decimal cumulativeRealisedPnL = prevAssetPnL.CumulativeRealisedPnL + realisedPnLResult.RealisedPnL;
-            decimal unrealisedPnL = (quote.Mid - avgPrice) * realisedPnLResult.CumulativeVolume;
-
+                crossQuote.Mid);
+                
             return new AssetRealisedPnL
             {
                 WalletId = walletId,
@@ -268,8 +246,8 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 CrossPrice = crossQuote.Mid,
 
                 Price = quote.Mid,
-                Volume = volume,
-                OppositeVolume = oppositeVolume,
+                Volume = realisedPnLResult.Volume,
+                OppositeVolume = realisedPnLResult.OppositeVolume,
                 Inverted = inverted,
 
                 PrevAvgPrice = prevAssetPnL.AvgPrice,
@@ -279,58 +257,16 @@ namespace Lykke.Service.MarketMakerReports.Services.PnL
                 CloseVolume = realisedPnLResult.ClosedVolume,
                 RealisedPnL = realisedPnLResult.RealisedPnL,
 
-                AvgPrice = avgPrice,
+                AvgPrice = realisedPnLResult.AvgPrice,
                 CumulativeVolume = realisedPnLResult.CumulativeVolume,
                 CumulativeOppositeVolume = realisedPnLResult.CumulativeOppositeVolume,
-                CumulativeRealisedPnL = cumulativeRealisedPnL,
-                UnrealisedPnL = unrealisedPnL,
+                CumulativeRealisedPnL = prevAssetPnL.CumulativeRealisedPnL + realisedPnLResult.RealisedPnL,
+                UnrealisedPnL = realisedPnLResult.UnrealisedPnL,
 
                 LimitOrderId = tradeData.LimitOrderId,
                 OppositeClientId = tradeData.OppositeClientId,
                 OppositeLimitOrderId = tradeData.OppositeLimitOrderId
             };
-        }
-
-        private async Task<Quote> GetQuoteAsync(MarketProfile marketProfile, string baseAssetId, string quoteAssetId)
-        {
-            string directAssetPairId = $"{baseAssetId}{quoteAssetId}";
-
-            if (baseAssetId == quoteAssetId)
-                return new Quote(directAssetPairId, DateTime.UtcNow, 1, 1);
-
-            string assetPairId = directAssetPairId;
-
-            bool inverted = false;
-
-            AssetPair assetPair = await _assetsServiceWithCache.TryGetAssetPairAsync(assetPairId);
-
-            if (assetPair == null)
-            {
-                assetPairId = $"{quoteAssetId}{baseAssetId}";
-                inverted = true;
-
-                assetPair = await _assetsServiceWithCache.TryGetAssetPairAsync(assetPairId);
-            }
-
-            if (assetPair == null)
-            {
-                throw new InvalidOperationException(
-                    $"Asset pair does not exist for '{baseAssetId}'/'{quoteAssetId}'");
-            }
-
-            FeedData feedData = marketProfile.Profile.FirstOrDefault(o => o.Asset == assetPairId);
-
-            if (feedData == null)
-                throw new InvalidOperationException($"No quote for asset pair '{assetPairId}'");
-
-            if (inverted)
-            {
-                return new Quote(directAssetPairId, feedData.DateTime, 1 / (decimal) feedData.Ask,
-                    1 / (decimal) feedData.Bid);
-            }
-
-            return new Quote(directAssetPairId, feedData.DateTime, (decimal) feedData.Ask,
-                (decimal) feedData.Bid);
         }
     }
 }
