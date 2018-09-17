@@ -99,6 +99,16 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
         public decimal PrevCumulativeOppositeVolume { get; set; }
         
         /// <summary>
+        /// The average price of the previous position.
+        /// </summary>
+        public decimal OpenPrice { get; set; }
+        
+        /// <summary>
+        /// The trade price in the calculated asset.
+        /// </summary>
+        public decimal ClosePrice { get; set; }
+        
+        /// <summary>
         /// The volume of the closed position.
         /// </summary>
         public decimal CloseVolume { get; set; }
@@ -127,6 +137,11 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
         /// The cumulative realised PnL calculated by closing deal.
         /// </summary>
         public decimal CumulativeRealisedPnL { get; set; }
+        
+        /// <summary>
+        /// The current rate of <see cref="AssetId"/> in calculated asset.
+        /// </summary>
+        public decimal Rate { get; set; }
         
         /// <summary>
         /// The <see cref="CumulativeVolume"/> realised by current rate.

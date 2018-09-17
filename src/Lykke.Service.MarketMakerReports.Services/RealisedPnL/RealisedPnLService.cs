@@ -245,7 +245,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                 CrossAssetPair = crossQuote.AssetPair,
                 CrossPrice = crossQuote.Mid,
 
-                Price = realisedPnLResult.CloseRate,
+                Price = realisedPnLResult.Price,
                 Volume = realisedPnLResult.Volume,
                 OppositeVolume = realisedPnLResult.OppositeVolume,
                 Inverted = inverted,
@@ -254,6 +254,8 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                 PrevCumulativeVolume = prevAssetPnL.CumulativeVolume,
                 PrevCumulativeOppositeVolume = prevAssetPnL.CumulativeOppositeVolume,
 
+                OpenPrice = prevAssetPnL.AvgPrice,
+                ClosePrice = realisedPnLResult.Price,
                 CloseVolume = realisedPnLResult.ClosedVolume,
                 RealisedPnL = realisedPnLResult.RealisedPnL,
 
@@ -261,6 +263,8 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                 CumulativeVolume = realisedPnLResult.CumulativeVolume,
                 CumulativeOppositeVolume = realisedPnLResult.CumulativeOppositeVolume,
                 CumulativeRealisedPnL = prevAssetPnL.CumulativeRealisedPnL + realisedPnLResult.RealisedPnL,
+                
+                Rate = quote.Mid,
                 UnrealisedPnL = realisedPnLResult.UnrealisedPnL,
 
                 LimitOrderId = tradeData.LimitOrderId,
