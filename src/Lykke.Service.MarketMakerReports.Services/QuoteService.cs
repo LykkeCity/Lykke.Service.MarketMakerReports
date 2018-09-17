@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,45 +34,43 @@ namespace Lykke.Service.MarketMakerReports.Services
         
         public async Task<Quote> GetAsync(string baseAssetId, string quoteAssetId)
         {
-            MarketProfile marketProfile = await GetMarketProfileAsync();
-            
             string directAssetPairId = $"{baseAssetId}{quoteAssetId}";
 
             if (baseAssetId == quoteAssetId)
                 return new Quote(directAssetPairId, DateTime.UtcNow, 1, 1);
 
-            string assetPairId = directAssetPairId;
-
+            IReadOnlyCollection<AssetPair> assetPairs = await _assetsServiceWithCache.GetAllAssetPairsAsync();
+            
             bool inverted = false;
 
-            AssetPair assetPair = await _assetsServiceWithCache.TryGetAssetPairAsync(assetPairId);
+            AssetPair assetPair = assetPairs
+                .SingleOrDefault(o => o.BaseAssetId == baseAssetId && o.QuotingAssetId == quoteAssetId);
 
             if (assetPair == null)
             {
-                assetPairId = $"{quoteAssetId}{baseAssetId}";
                 inverted = true;
 
-                assetPair = await _assetsServiceWithCache.TryGetAssetPairAsync(assetPairId);
+                assetPair = assetPairs
+                    .SingleOrDefault(o => o.BaseAssetId == quoteAssetId && o.QuotingAssetId == baseAssetId);
             }
 
             if (assetPair == null)
-            {
-                throw new InvalidOperationException(
-                    $"Asset pair does not exist for '{baseAssetId}'/'{quoteAssetId}'");
-            }
+                throw new InvalidOperationException($"Asset pair does not exist for '{baseAssetId}'/'{quoteAssetId}'");
 
-            FeedData feedData = marketProfile.Profile.FirstOrDefault(o => o.Asset == assetPairId);
+            MarketProfile marketProfile = await GetMarketProfileAsync();
+            
+            FeedData feedData = marketProfile.Profile.FirstOrDefault(o => o.Asset == assetPair.Id);
 
             if (feedData == null)
-                throw new InvalidOperationException($"No quote for asset pair '{assetPairId}'");
+                throw new InvalidOperationException($"No quote for asset pair '{assetPair.Id}'");
 
             if (inverted)
             {
-                return new Quote(directAssetPairId, feedData.DateTime, 1 / (decimal) feedData.Ask,
+                return new Quote(assetPair.Id, feedData.DateTime, 1 / (decimal) feedData.Ask,
                     1 / (decimal) feedData.Bid);
             }
 
-            return new Quote(directAssetPairId, feedData.DateTime, (decimal) feedData.Ask,
+            return new Quote(assetPair.Id, feedData.DateTime, (decimal) feedData.Ask,
                 (decimal) feedData.Bid);
         }
 
