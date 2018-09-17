@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Lykke.Sdk.Settings;
+using Lykke.Service.MarketMakerReports.Settings.Clients;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings;
 using Lykke.Service.NettingEngine.Client;
 
@@ -13,5 +14,7 @@ namespace Lykke.Service.MarketMakerReports.Settings
         public RateCalculatorServiceClientSettings RateCalculatorServiceClient { get; set; }
         
         public NettingEngineServiceClientSettings NettingEngineServiceClient { get; set; }
+        
+        public AssetsServiceClientSettings AssetsServiceClient { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings.Db;
 
 namespace Lykke.Service.MarketMakerReports.Settings.ServiceSettings
@@ -9,5 +10,7 @@ namespace Lykke.Service.MarketMakerReports.Settings.ServiceSettings
         public DbSettings Db { get; set; }
         
         public RabbitSettings Rabbit { get; set; }
+        
+        public TimeSpan AssetsCacheExpirationPeriod { get; set; }
     }
 }

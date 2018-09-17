@@ -14,7 +14,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netcoreapp2.0\Lykke.Service.MarketMakerReports.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Update="Dockerfile">
@@ -24,7 +24,6 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="Lykke.RabbitMqBroker" Version="7.3.0" />
-    <PackageReference Include="Lykke.Service.NettingEngine.Client" Version="1.0.23" />
     <PackageReference Include="Lykke.Service.RateCalculator.Client" Version="1.2.0" />
     <PackageReference Include="Lykke.Sdk" Version="5.2.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />

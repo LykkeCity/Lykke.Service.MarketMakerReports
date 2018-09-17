@@ -17,18 +17,21 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
         private readonly ILogFactory _logFactory;
         private readonly ExchangeSettings _settings;
         private readonly ILykkeTradeService _lykkeTradeService;
+        private readonly IRealisedPnLService _realisedPnLService;
         private readonly ILog _log;
     
         private RabbitMqSubscriber<LykkeTrade> _subscriber;
 
         public LykkeTradeSubscriber(ILogFactory logFactory,
             ExchangeSettings exchangeSettings,
-            ILykkeTradeService lykkeTradeService)
+            ILykkeTradeService lykkeTradeService,
+            IRealisedPnLService realisedPnLService)
         {
             _log = logFactory.CreateLog(this);
             _logFactory = logFactory;
             _settings = exchangeSettings;
             _lykkeTradeService = lykkeTradeService;
+            _realisedPnLService = realisedPnLService;
         }
 
         public void Start()
@@ -53,7 +56,9 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
             try
             {
                 var model = Mapper.Map<Core.Domain.Trades.LykkeTrade>(message);
-                await _lykkeTradeService.HandleAsync(model);
+                await Task.WhenAll(
+                    _lykkeTradeService.HandleAsync(model),
+                    _realisedPnLService.CalculateAsync(model));
             }
             catch (Exception exception)
             {

@@ -1,4 +1,6 @@
 MarketMakerReportsService:
+  AssetsCacheExpirationPeriod: 01:00:00
+  
   Db:
     DataConnectionString:
       settings-key: MarketMakerReportsService-DataConnectionString
@@ -74,6 +76,10 @@ NettingEngineServiceClient:
     settings-key: NettingEngineServiceInstances
     types:
     - JsonArray
+
+AssetsServiceClient:
+  ServiceUrl:
+    settings-key: AssetsServiceUrl
     
 SlackNotifications:
   AzureQueue:
