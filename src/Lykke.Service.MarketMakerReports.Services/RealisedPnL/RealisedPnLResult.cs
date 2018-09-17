@@ -4,7 +4,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
     {
         public decimal AvgPrice { get; set; }
 
-        public decimal CloseRate { get; set; }
+        public decimal Price { get; set; }
         
         public decimal Volume { get; set; }
 

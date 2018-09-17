@@ -17,7 +17,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
         {
             var pnl = new RealisedPnLResult
             {
-                CloseRate = inverted
+                Price = inverted
                     ? 1 / tradeRate * crossRate
                     : tradeRate * crossRate,
                 Volume = inverted
@@ -43,8 +43,8 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                     pnl.ClosedVolume = Math.Abs(currentVolume);
                     decimal openVolume = pnl.Volume - pnl.ClosedVolume;
                     pnl.CumulativeVolume = openVolume * direction;
-                    pnl.CumulativeOppositeVolume = openVolume * pnl.CloseRate * -1 * direction;
-                    pnl.AvgPrice = pnl.CloseRate;
+                    pnl.CumulativeOppositeVolume = openVolume * pnl.Price * -1 * direction;
+                    pnl.AvgPrice = pnl.Price;
                 }
                 else
                 {
@@ -54,7 +54,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                     pnl.AvgPrice = openRate;
                 }
 
-                pnl.RealisedPnL = (pnl.CloseRate - openRate) * pnl.ClosedVolume;
+                pnl.RealisedPnL = (pnl.Price - openRate) * pnl.ClosedVolume;
             }
 
             pnl.UnrealisedPnL = (rate - pnl.AvgPrice) * pnl.CumulativeVolume;
