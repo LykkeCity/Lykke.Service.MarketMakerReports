@@ -215,6 +215,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                 ? tradeData.BaseAsset
                 : tradeData.QuoteAsset;
 
+            Quote quote = await _quoteService.GetAsync(assetId, QuoteAssetId);
             Quote crossQuote = await _quoteService.GetAsync(crossAssetId, QuoteAssetId);
 
             RealisedPnLResult realisedPnLResult = RealisedPnLCalculator.Calculate(
@@ -224,6 +225,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                 tradeData.Type == TradeType.Sell ? -1 : 1,
                 prevAssetPnL.CumulativeVolume,
                 prevAssetPnL.CumulativeOppositeVolume,
+                quote.Mid,
                 prevAssetPnL.AvgPrice,
                 crossQuote.Mid);
                 

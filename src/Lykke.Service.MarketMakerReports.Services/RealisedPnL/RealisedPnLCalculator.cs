@@ -11,6 +11,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
             int direction,
             decimal currentVolume,
             decimal currentOppositeVolume,
+            decimal rate,
             decimal openRate,
             decimal crossRate)
         {
@@ -56,7 +57,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                 pnl.RealisedPnL = (pnl.CloseRate - openRate) * pnl.ClosedVolume;
             }
 
-            pnl.UnrealisedPnL = (pnl.CloseRate - pnl.AvgPrice) * pnl.CumulativeVolume;
+            pnl.UnrealisedPnL = (rate - pnl.AvgPrice) * pnl.CumulativeVolume;
 
             return pnl;
         }
