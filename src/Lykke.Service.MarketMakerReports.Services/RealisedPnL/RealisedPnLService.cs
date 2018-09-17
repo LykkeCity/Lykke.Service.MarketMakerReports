@@ -187,7 +187,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                 BaseAsset = assetId,
                 QuoteAsset = QuoteAssetId,
                 Price = quote.Mid,
-                Volume = (decimal) amount,
+                Volume = (decimal) Math.Abs(amount),
                 Type = amount < 0 ? TradeType.Sell : TradeType.Buy,
                 Time = DateTime.UtcNow,
                 LimitOrderId = Guid.Empty.ToString("D"),
