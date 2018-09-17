@@ -18,6 +18,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             int direction = 1;
             decimal prevCumulativeVolume = 0;
             decimal prevCumulativeOppositeVolume = 0;
+            decimal rate = 6543.40m;
             decimal openRate = 0;
             decimal crossRate = 1;
 
@@ -43,6 +44,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 direction,
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
+                rate,
                 openRate,
                 crossRate);
 
@@ -62,6 +64,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             int direction = -1;
             decimal prevCumulativeVolume = 0;
             decimal prevCumulativeOppositeVolume = 0;
+            decimal rate = 6543.40m;
             decimal openRate = 0;
             decimal crossRate = 1;
 
@@ -87,6 +90,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 direction,
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
+                rate,
                 openRate,
                 crossRate);
 
@@ -106,6 +110,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             int direction = 1;
             decimal prevCumulativeVolume = 10;
             decimal prevCumulativeOppositeVolume = -65434.00m;
+            decimal rate = 6545.88m;
             decimal openRate = 6543.40m;
             decimal crossRate = 1.16m;
 
@@ -124,8 +129,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             expectedResult.AvgPrice =
                 Math.Abs(expectedResult.CumulativeOppositeVolume / expectedResult.CumulativeVolume);
 
-            expectedResult.UnrealisedPnL =
-                (expectedResult.CloseRate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
+            expectedResult.UnrealisedPnL = (rate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
 
             // act
 
@@ -136,6 +140,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 direction,
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
+                rate,
                 openRate,
                 crossRate);
 
@@ -155,6 +160,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             int direction = -1;
             decimal prevCumulativeVolume = -10;
             decimal prevCumulativeOppositeVolume = 65434.00m;
+            decimal rate = 6545.88m;
             decimal openRate = 6543.40m;
             decimal crossRate = 1.16m;
 
@@ -173,8 +179,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             expectedResult.AvgPrice =
                 Math.Abs(expectedResult.CumulativeOppositeVolume / expectedResult.CumulativeVolume);
 
-            expectedResult.UnrealisedPnL =
-                (expectedResult.CloseRate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
+            expectedResult.UnrealisedPnL = (rate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
 
             // act
 
@@ -185,6 +190,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 direction,
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
+                rate,
                 openRate,
                 crossRate);
 
@@ -204,6 +210,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             int direction = -1;
             decimal prevCumulativeVolume = -10;
             decimal prevCumulativeOppositeVolume = 65434.00m;
+            decimal rate = 6545.88m;
             decimal openRate = 6543.40m;
             decimal crossRate = 1.16m;
 
@@ -225,8 +232,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             expectedResult.AvgPrice =
                 Math.Abs(expectedResult.CumulativeOppositeVolume / expectedResult.CumulativeVolume);
 
-            expectedResult.UnrealisedPnL =
-                (expectedResult.CloseRate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
+            expectedResult.UnrealisedPnL = (rate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
 
             // act
 
@@ -237,6 +243,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 direction,
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
+                rate,
                 openRate,
                 crossRate);
 
@@ -256,6 +263,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             int direction = -1;
             decimal prevCumulativeVolume = 11;
             decimal prevCumulativeOppositeVolume = -71939.13m;
+            decimal rate = 6545.70m;
             decimal openRate = 6539.92m;
             decimal crossRate = 1m;
 
@@ -272,8 +280,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
 
             expectedResult.RealisedPnL = (expectedResult.CloseRate - openRate) * expectedResult.ClosedVolume;
 
-            expectedResult.UnrealisedPnL =
-                (expectedResult.CloseRate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
+            expectedResult.UnrealisedPnL = (rate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
 
             // act
 
@@ -284,6 +291,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 direction,
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
+                rate,
                 openRate,
                 crossRate);
 
@@ -303,6 +311,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             int direction = -1;
             decimal prevCumulativeVolume = 5;
             decimal prevCumulativeOppositeVolume = -32699.61m;
+            decimal rate = 6545.05m;
             decimal openRate = 6539.92m;
             decimal crossRate = 1m;
 
@@ -322,7 +331,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
 
             expectedResult.RealisedPnL = (expectedResult.CloseRate - openRate) * expectedResult.ClosedVolume;
 
-            expectedResult.UnrealisedPnL = 0;
+            expectedResult.UnrealisedPnL = (rate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
 
             // act
 
@@ -333,6 +342,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 direction,
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
+                rate,
                 openRate,
                 crossRate);
 
@@ -352,6 +362,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             int direction = 1;
             decimal prevCumulativeVolume = -5;
             decimal prevCumulativeOppositeVolume = 32699.61m;
+            decimal rate = 6545.05m;
             decimal openRate = 6539.92m;
             decimal crossRate = 1m;
 
@@ -371,7 +382,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
 
             expectedResult.RealisedPnL = (expectedResult.CloseRate - openRate) * expectedResult.ClosedVolume;
 
-            expectedResult.UnrealisedPnL = 0;
+            expectedResult.UnrealisedPnL = (rate - expectedResult.AvgPrice) * expectedResult.CumulativeVolume;
 
             // act
 
@@ -382,6 +393,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 direction,
                 prevCumulativeVolume,
                 prevCumulativeOppositeVolume,
+                rate,
                 openRate,
                 crossRate);
 
