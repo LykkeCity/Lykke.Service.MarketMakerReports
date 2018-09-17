@@ -17,13 +17,13 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
             var pnl = new RealisedPnLResult
             {
                 CloseRate = inverted
-                    ? tradeVolume * crossRate
+                    ? 1 / tradeRate * crossRate
                     : tradeRate * crossRate,
                 Volume = inverted
                     ? tradeRate * tradeVolume
                     : tradeVolume,
                 OppositeVolume = inverted
-                    ? tradeVolume * crossRate
+                    ? tradeVolume * crossRate 
                     : tradeRate * tradeVolume * crossRate
             };
 
