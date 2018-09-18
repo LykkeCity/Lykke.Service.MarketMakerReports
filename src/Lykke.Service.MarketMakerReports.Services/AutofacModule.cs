@@ -32,7 +32,8 @@ namespace Lykke.Service.MarketMakerReports.Services
                 .SingleInstance();
 
             builder.RegisterType<WalletSettingsService>()
-                .As<IWalletSettingsService>();
+                .As<IWalletSettingsService>()
+                .SingleInstance();
             
             builder.RegisterType<HealthMonitorService>()
                 .As<IHealthMonitorService>()
