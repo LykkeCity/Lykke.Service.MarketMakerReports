@@ -43,7 +43,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
             _assetsServiceWithCache = assetsServiceWithCache;
             _quoteService = quoteService;
             _log = logFactory.CreateLog(this);
-            
+
             _cache = new RealisedPnLCache();
         }
 
@@ -180,12 +180,17 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
             IReadOnlyCollection<AssetPair> assetPairs = await _assetsServiceWithCache.GetAllAssetPairsAsync();
 
             AssetPair assetPair = assetPairs
-                .SingleOrDefault(o => o.BaseAssetId == assetId && o.QuotingAssetId == QuoteAssetId ||
-                                      o.BaseAssetId == QuoteAssetId && o.QuotingAssetId == assetId);
-            
+                .SingleOrDefault(o => o.BaseAssetId == assetId && o.QuotingAssetId == QuoteAssetId);
+
+            if (assetPair == null)
+            {
+                assetPair = assetPairs
+                    .SingleOrDefault(o => o.BaseAssetId == QuoteAssetId && o.QuotingAssetId == assetId);
+            }
+
             if (assetPair == null)
                 throw new InvalidOperationException($"Asset pair found by asset '{assetId}' and '{QuoteAssetId}'");
-            
+
             Quote quote = await _quoteService.GetAsync(assetId, QuoteAssetId);
 
             var tradeData = new TradeData
@@ -217,7 +222,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
         {
             AssetRealisedPnL prevAssetPnL = await _assetRealisedPnLRepository.GetLastAsync(walletId, assetId) ??
                                             new AssetRealisedPnL();
-            
+
             bool inverted = tradeData.QuoteAsset == assetId;
 
             string crossAssetId = inverted
@@ -237,7 +242,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                 quote.Mid,
                 prevAssetPnL.AvgPrice,
                 crossQuote.Mid);
-                
+
             return new AssetRealisedPnL
             {
                 WalletId = walletId,
@@ -272,7 +277,7 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                 CumulativeVolume = realisedPnLResult.CumulativeVolume,
                 CumulativeOppositeVolume = realisedPnLResult.CumulativeOppositeVolume,
                 CumulativeRealisedPnL = prevAssetPnL.CumulativeRealisedPnL + realisedPnLResult.RealisedPnL,
-                
+
                 Rate = quote.Mid,
                 UnrealisedPnL = realisedPnLResult.UnrealisedPnL,
 

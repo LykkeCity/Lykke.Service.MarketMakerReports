@@ -73,7 +73,7 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
             {
                 sw.Stop();
 
-                _log.InfoWithDetails("External trade was handled",
+                _log.InfoWithDetails("External trade was received",
                     new
                     {
                         message,
