@@ -177,13 +177,22 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
             if (Math.Abs(amount) <= Double.Epsilon)
                 return;
 
+            IReadOnlyCollection<AssetPair> assetPairs = await _assetsServiceWithCache.GetAllAssetPairsAsync();
+
+            AssetPair assetPair = assetPairs
+                .SingleOrDefault(o => o.BaseAssetId == assetId && o.QuotingAssetId == QuoteAssetId ||
+                                      o.BaseAssetId == QuoteAssetId && o.QuotingAssetId == assetId);
+            
+            if (assetPair == null)
+                throw new InvalidOperationException($"Asset pair found by asset '{assetId}' and '{QuoteAssetId}'");
+            
             Quote quote = await _quoteService.GetAsync(assetId, QuoteAssetId);
 
             var tradeData = new TradeData
             {
                 Id = Guid.Empty.ToString("D"),
                 Exchange = ExchangeNames.Lykke,
-                AssetPair = $"{assetId}{QuoteAssetId}",
+                AssetPair = assetPair.Id,
                 BaseAsset = assetId,
                 QuoteAsset = QuoteAssetId,
                 Price = quote.Mid,

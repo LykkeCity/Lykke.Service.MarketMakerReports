@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using AutoMapper;
 using Common.Log;
 using Lykke.Common.Log;
 using Lykke.RabbitMqBroker;
 using Lykke.RabbitMqBroker.Subscriber;
+using Lykke.Service.MarketMakerReports.Core.Extensions;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.MarketMakerReports.Managers;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings;
@@ -53,16 +55,30 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
 
         private async Task ProcessMessageAsync(ExternalTrade message)
         {
+            var sw = new Stopwatch();
+            
             try
             {
                 var model = Mapper.Map<Core.Domain.Trades.ExternalTrade>(message);
+                
                 await Task.WhenAll(
                     _externalTradeService.HandleAsync(model),
                     _realisedPnLService.CalculateAsync(model));
             }
             catch (Exception exception)
             {
-                _log.Error(exception, "An error occurred during processing external trade message", message);
+                _log.ErrorWithDetails(exception, "An error occurred during processing external trade", message);
+            }
+            finally
+            {
+                sw.Stop();
+
+                _log.InfoWithDetails("External trade was handled",
+                    new
+                    {
+                        message,
+                        sw.ElapsedMilliseconds
+                    });
             }
         }
 
