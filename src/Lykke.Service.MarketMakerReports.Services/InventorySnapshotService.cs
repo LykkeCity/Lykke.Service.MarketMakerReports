@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +6,7 @@ using Common;
 using Common.Log;
 using Lykke.Common.Log;
 using Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots;
+using Lykke.Service.MarketMakerReports.Core.Exceptions;
 using Lykke.Service.MarketMakerReports.Core.Repositories;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.RateCalculator.Client;
@@ -94,6 +95,30 @@ namespace Lykke.Service.MarketMakerReports.Services
         public Task<IEnumerable<InventorySnapshot>> GetAsync(DateTime startDate, DateTime endDate, Periodicity periodicity)
         {
             return _inventorySnapshotRepository.GetAsync(startDate, endDate, periodicity);
+        }
+
+        public async Task<InventorySnapshotDynamics> GetDynamicsAsync(DateTime startDate, DateTime endDate)
+        {
+            var startSnapshot = await _inventorySnapshotRepository.GetFirstForDateAsync(startDate);
+
+            var endSnapshot = await _inventorySnapshotRepository.GetLastForDateAsync(endDate);
+
+            if (startSnapshot == null)
+            {
+                throw new InventoryDynamicsCalculationException($"No InventorySnapshot for startDate {startDate}");
+            }
+
+            if (endSnapshot == null)
+            {
+                throw new InventoryDynamicsCalculationException($"No InventorySnapshot for endDate {endDate}");
+            }
+
+            if (startSnapshot.Timestamp == endSnapshot.Timestamp)
+            {
+                throw new InventoryDynamicsCalculationException($"Not enough snapshots inside the specified period to calculate dynamics");
+            }
+
+            return new InventoryDynamicsCalculator().GetDynamics(startSnapshot, endSnapshot);
         }
 
         public Task<InventorySnapshot> GetLastAsync()
