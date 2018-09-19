@@ -200,7 +200,7 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
         }
 
         [TestMethod]
-        public void Increase_Long_Opened_Position_Inverted_AssetPair()
+        public void Increase_Short_Opened_Position_Inverted_AssetPair()
         {
             // arrange
 
@@ -208,8 +208,8 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
             decimal tradeVolume = 10 * 5607.87m;
             bool inverted = true;
             int direction = -1;
-            decimal prevCumulativeVolume = -10;
-            decimal prevCumulativeOppositeVolume = 65434.00m;
+            decimal prevCumulativeVolume = 10;
+            decimal prevCumulativeOppositeVolume = -65434.00m;
             decimal rate = 6545.88m;
             decimal openRate = 6543.40m;
             decimal crossRate = 1.16m;
@@ -224,10 +224,10 @@ namespace Lykke.Service.MarketMakerReports.Services.Tests.RealisedPnL
                 RealisedPnL = 0
             };
 
-            expectedResult.CumulativeVolume = prevCumulativeVolume + expectedResult.Volume * direction;
+            expectedResult.CumulativeVolume = prevCumulativeVolume + expectedResult.Volume * direction * -1;
 
             expectedResult.CumulativeOppositeVolume = prevCumulativeOppositeVolume +
-                                                      expectedResult.Volume * expectedResult.Price * -1 * direction;
+                                                      expectedResult.Volume * expectedResult.Price * -1 * direction * -1;
 
             expectedResult.AvgPrice =
                 Math.Abs(expectedResult.CumulativeOppositeVolume / expectedResult.CumulativeVolume);
