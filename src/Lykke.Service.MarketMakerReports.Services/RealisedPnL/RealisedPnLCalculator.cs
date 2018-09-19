@@ -28,6 +28,9 @@ namespace Lykke.Service.MarketMakerReports.Services.RealisedPnL
                     : tradeRate * tradeVolume * crossRate
             };
 
+            if (inverted)
+                direction *= -1;
+            
             if (currentVolume >= 0 && direction > 0 || currentVolume <= 0 && direction < 0)
             {
                 pnl.CumulativeVolume = currentVolume + pnl.Volume * direction;
