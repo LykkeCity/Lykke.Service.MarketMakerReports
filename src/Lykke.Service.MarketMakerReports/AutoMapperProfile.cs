@@ -34,9 +34,8 @@ namespace Lykke.Service.MarketMakerReports
 
             CreateMap<Core.Domain.InventorySnapshots.InventorySnapshot, InventorySnapshotBriefModel>(MemberList.Destination);
 
-            CreateMap<Core.Domain.InventorySnapshots.AssetBalanceInventory, AssetBalanceInventoryModel>()
-                .ForMember(x => x.Asset, m => m.MapFrom(x => x.AssetDisplayId ?? x.AssetId));
-            
+            CreateMap<Core.Domain.InventorySnapshots.AssetBalanceInventory, AssetBalanceInventoryModel>();
+
             CreateMap<PnLResult, PnLResultModel>(MemberList.Destination);
 
             CreateMap<AssetPnL, AssetPnLModel>()
