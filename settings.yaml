@@ -1,27 +1,29 @@
 MarketMakerReportsService:
   AssetsCacheExpirationPeriod: 01:00:00
-  
+
   Db:
     DataConnectionString:
       settings-key: MarketMakerReportsService-DataConnectionString
       types:
-        - AzureTableStorage
-    
+      - AzureTableStorage
+
     LogsConnectionString:
       settings-key: MarketMakerReportsService-LogsConnectionString
       types:
-        - AzureTableStorage
-        
+      - AzureTableStorage
+
   Rabbit:
     AuditMessage:
       ConnectionString:
         settings-key: MarketMakerReportService-Rabbit-AuditMessage-ConnectionString
         types:
-          - RabbitMq
+        - RabbitMq
       Exchange:
         settings-key: MarketMakerReportService-Rabbit-AuditMessage-Exchange
       Queue:
         settings-key: MarketMakerReportService-Rabbit-AuditMessage-Queue
+      Enabled:
+        settings-key: MarketMakerReportService-Rabbit-AuditMessage-Enabled
 
     InventorySnapshot:
       ConnectionString:
@@ -32,6 +34,8 @@ MarketMakerReportsService:
         settings-key: MarketMakerReportService-Rabbit-InventorySnapshot-Exchange
       Queue:
         settings-key: MarketMakerReportService-Rabbit-InventorySnapshot-Queue
+      Enabled:
+        settings-key: MarketMakerReportService-Rabbit-InventorySnapshot-Enabled
 
     LykkeTrade:
       ConnectionString:
@@ -42,6 +46,8 @@ MarketMakerReportsService:
         settings-key: MarketMakerReportService-Rabbit-LykkeTrade-Exchange
       Queue:
         settings-key: MarketMakerReportService-Rabbit-LykkeTrade-Queue
+      Enabled:
+        settings-key: MarketMakerReportService-Rabbit-LykkeTrade-Enabled
 
     ExternalTrade:
       ConnectionString:
@@ -52,6 +58,8 @@ MarketMakerReportsService:
         settings-key: MarketMakerReportService-Rabbit-ExternalTrade-Exchange
       Queue:
         settings-key: MarketMakerReportService-Rabbit-ExternalTrade-Queue
+      Enabled:
+        settings-key: MarketMakerReportService-Rabbit-ExternalTrade-Enabled
 
     HealthIssue:
       ConnectionString:
@@ -62,6 +70,8 @@ MarketMakerReportsService:
         settings-key: MarketMakerReportService-Rabbit-HealthIssue-Exchange
       Queue:
         settings-key: MarketMakerReportService-Rabbit-HealthIssue-Queue
+      Enabled:
+        settings-key: MarketMakerReportService-Rabbit-HealthIssue-Enabled
 
 RateCalculatorServiceClient:
   ServiceUrl:
@@ -70,7 +80,7 @@ RateCalculatorServiceClient:
 MonitoringServiceClient:
   MonitoringServiceUrl:
     settings-key: MonitoringServiceUrl
-    
+
 NettingEngineServiceClient:
   Instances:
     settings-key: NettingEngineServiceInstances
@@ -80,13 +90,13 @@ NettingEngineServiceClient:
 AssetsServiceClient:
   ServiceUrl:
     settings-key: AssetsServiceUrl
-    
+
 SlackNotifications:
   AzureQueue:
     ConnectionString:
       settings-key: SlackNotificationsConnString
       types:
-        - AzureTableStorage
-    
+      - AzureTableStorage
+
     QueueName:
       settings-key: SlackQueueName
