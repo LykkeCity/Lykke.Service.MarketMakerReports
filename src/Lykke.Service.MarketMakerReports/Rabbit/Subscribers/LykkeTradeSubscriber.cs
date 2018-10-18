@@ -9,7 +9,7 @@ using Lykke.RabbitMqBroker.Subscriber;
 using Lykke.Service.MarketMakerReports.Core.Extensions;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.MarketMakerReports.Managers;
-using Lykke.Service.MarketMakerReports.Settings.ServiceSettings;
+using Lykke.Service.MarketMakerReports.Settings.ServiceSettings.Rabbit;
 using Lykke.Service.NettingEngine.Client.RabbitMq.Trades;
 
 namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
@@ -38,6 +38,9 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
 
         public void Start()
         {
+            if(!_settings.Enabled)
+                return;
+
             var settings = RabbitMqSubscriptionSettings
                 .CreateForSubscriber(_settings.ConnectionString, _settings.Exchange, _settings.Queue);
 

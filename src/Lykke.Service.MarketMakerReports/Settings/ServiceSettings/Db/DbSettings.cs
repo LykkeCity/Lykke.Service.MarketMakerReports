@@ -8,7 +8,7 @@ namespace Lykke.Service.MarketMakerReports.Settings.ServiceSettings.Db
     {
         [AzureTableCheck]
         public string DataConnectionString { get; set; }
-        
+
         [AzureTableCheck]
         public string LogsConnectionString { get; set; }
     }
