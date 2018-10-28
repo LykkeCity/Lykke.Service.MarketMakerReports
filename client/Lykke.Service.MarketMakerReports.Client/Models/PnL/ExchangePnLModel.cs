@@ -1,19 +1,24 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
 {
+    /// <summary>
+    /// Represents an exchange profit and loss.
+    /// </summary>
+    [PublicAPI]
     public class ExchangePnLModel
     {
         /// <summary>
         /// Name of the Exchange
         /// </summary>
         public string Exchange { get; set; }
-        
+
         /// <summary>
-        /// Adjusted part of the PnL (as result of trading) in USD
+        /// Trading part of the PnL (as result of trading) in USD
         /// </summary>
-        public decimal Adjusted { get; set; }
-        
+        public decimal Trading { get; set; }
+
         /// <summary>
         /// Directional part of the PnL (as result of price change), in USD
         /// </summary>
@@ -23,7 +28,7 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
         /// Total PnL as a sum of all the parts, in USD
         /// </summary>
         public decimal Total { get; set; }
-        
+
         /// <summary>
         /// PnLs by assets
         /// </summary>
