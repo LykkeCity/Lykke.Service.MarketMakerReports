@@ -35,8 +35,9 @@ namespace Lykke.Service.MarketMakerReports.Services
         {
             try
             {
-                await FillUsdForInventories(model);
-                await FillUsdForBalances(model);
+                await FillUsdForInventoriesAsync(model);
+                await FillUsdForBalancesAsync(model);
+                await FillUsdForCreditsAsync(model);
             }
             catch (Exception e)
             {
@@ -46,7 +47,7 @@ namespace Lykke.Service.MarketMakerReports.Services
             await _inventorySnapshotRepository.InsertAsync(model);
         }
 
-        private async Task FillUsdForInventories(InventorySnapshot inventorySnapshot)
+        private async Task FillUsdForInventoriesAsync(InventorySnapshot inventorySnapshot)
         {
             var balanceRecords = inventorySnapshot.Assets
                 .SelectMany(x => x.Inventories.Select(i => new BalanceRecord(decimal.ToDouble(i.Volume), x.AssetId)))
@@ -62,7 +63,7 @@ namespace Lykke.Service.MarketMakerReports.Services
             }
         }
 
-        private async Task FillUsdForBalances(InventorySnapshot inventorySnapshot)
+        private async Task FillUsdForBalancesAsync(InventorySnapshot inventorySnapshot)
         {
             var balanceRecords = inventorySnapshot.Assets
                 .SelectMany(x => x.Balances.Select(b => new BalanceRecord(decimal.ToDouble(b.Amount), x.AssetId)))
@@ -78,6 +79,22 @@ namespace Lykke.Service.MarketMakerReports.Services
             }
         }
 
+        private async Task FillUsdForCreditsAsync(InventorySnapshot inventorySnapshot)
+        {
+            var balanceRecords = inventorySnapshot.Assets
+                .SelectMany(x => x.Balances.Select(b => new BalanceRecord(decimal.ToDouble(b.Credit), x.AssetId)))
+                .ToList();
+
+            var balanceRecordsInUsd = await GetInUsdAsync(balanceRecords);
+
+            var flatListOfBalances = inventorySnapshot.Assets.SelectMany(x => x.Balances).ToList();
+            
+            for (int i = 0; i < balanceRecords.Count; i++)
+            {
+                flatListOfBalances[i].CreditInUsd = (decimal) balanceRecordsInUsd[i].Balance;
+            }
+        }
+        
         private async Task<IReadOnlyList<BalanceRecord>> GetInUsdAsync(ICollection<BalanceRecord> balanceRecords)
         {
             var balanceRecordsInUsd = (await _rateCalculatorClient.GetAmountInBaseAsync(balanceRecords, Usd)).ToList();

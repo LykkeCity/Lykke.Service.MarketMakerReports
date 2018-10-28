@@ -9,7 +9,7 @@ using Lykke.RabbitMqBroker.Subscriber;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.MarketMakerReports.Managers;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings.Rabbit;
-using Lykke.Service.NettingEngine.Client.RabbitMq;
+using Lykke.Service.NettingEngine.Contract.Audit;
 
 namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
 {
@@ -21,7 +21,7 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
         private readonly IAuditMessageService _auditMessageService;
         private readonly ILog _log;
     
-        private RabbitMqSubscriber<AuditMessage> _subscriber;
+        private RabbitMqSubscriber<AuditEvent> _subscriber;
 
         public AuditMessageSubscriber(ILogFactory logFactory,
             ExchangeSettings exchangeSettings,
@@ -44,16 +44,16 @@ namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
             settings.DeadLetterExchangeName = null;
             settings.IsDurable = true;
 
-            _subscriber = new RabbitMqSubscriber<AuditMessage>(_logFactory, settings,
+            _subscriber = new RabbitMqSubscriber<AuditEvent>(_logFactory, settings,
                     new ResilientErrorHandlingStrategy(_logFactory, settings, TimeSpan.FromSeconds(10)))
-                .SetMessageDeserializer(new JsonMessageDeserializer<AuditMessage>())
+                .SetMessageDeserializer(new JsonMessageDeserializer<AuditEvent>())
                 .SetMessageReadStrategy(new MessageReadQueueStrategy())
                 .Subscribe(ProcessMessageAsync)
                 .CreateDefaultBinding()
                 .Start();
         }
 
-        private async Task ProcessMessageAsync(AuditMessage message)
+        private async Task ProcessMessageAsync(AuditEvent message)
         {
             try
             {

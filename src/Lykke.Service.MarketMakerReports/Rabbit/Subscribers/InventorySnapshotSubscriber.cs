@@ -9,7 +9,7 @@ using Lykke.RabbitMqBroker.Subscriber;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.MarketMakerReports.Managers;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings.Rabbit;
-using Lykke.Service.NettingEngine.Client.RabbitMq.InventorySnapshots;
+using Lykke.Service.NettingEngine.Contract.Inventory;
 
 namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
 {

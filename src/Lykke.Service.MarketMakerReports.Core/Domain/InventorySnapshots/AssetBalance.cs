@@ -7,5 +7,9 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots
         public decimal Amount { get; set; }
         
         public decimal AmountInUsd { get; set; }
+        
+        public decimal Credit { get; set; }
+
+        public decimal CreditInUsd { get; set; }
     }
 }

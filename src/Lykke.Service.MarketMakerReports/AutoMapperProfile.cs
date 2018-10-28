@@ -7,11 +7,11 @@ using Lykke.Service.MarketMakerReports.Client.Models.PnL;
 using Lykke.Service.MarketMakerReports.Client.Models.RealisedPnLSettings;
 using Lykke.Service.MarketMakerReports.Client.Models.Trades;
 using Lykke.Service.MarketMakerReports.Core.Domain.Health;
+using Lykke.Service.MarketMakerReports.Core.Domain.InventorySnapshots;
 using Lykke.Service.MarketMakerReports.Core.Domain.PnL;
 using Lykke.Service.MarketMakerReports.Core.Domain.Settings;
 using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
-using Lykke.Service.NettingEngine.Client.RabbitMq;
-using Lykke.Service.NettingEngine.Client.RabbitMq.InventorySnapshots;
+using Lykke.Service.NettingEngine.Contract.Audit;
 using HealthIssueContract = Lykke.Service.MarketMakerReports.Contracts.HealthIssues.HealthIssue;
 
 namespace Lykke.Service.MarketMakerReports
@@ -20,21 +20,21 @@ namespace Lykke.Service.MarketMakerReports
     {
         public AutoMapperProfile()
         {
-            CreateMap<AuditMessage, Core.Domain.AuditMessages.AuditMessage>(MemberList.Source);
+            CreateMap<AuditEvent, Core.Domain.AuditMessages.AuditMessage>(MemberList.Source);
 
             CreateMap<Core.Domain.AuditMessages.AuditMessage, AuditMessageModel>(MemberList.Destination);
 
-            CreateMap<InventorySnapshot, Core.Domain.InventorySnapshots.InventorySnapshot>(MemberList.None);
+            CreateMap<InventorySnapshot, InventorySnapshot>(MemberList.None);
 
-            CreateMap<AssetBalanceInventory, Core.Domain.InventorySnapshots.AssetBalanceInventory>()
+            CreateMap<AssetBalanceInventory, AssetBalanceInventory>()
                 .ForMember(x => x.Balances, m => m.MapFrom(x => x.Balances ?? new List<AssetBalance>()))
                 .ForMember(x => x.Inventories, m => m.MapFrom(x => x.Inventories ?? new List<AssetInventory>()));
 
-            CreateMap<Core.Domain.InventorySnapshots.InventorySnapshot, InventorySnapshotModel>(MemberList.Destination);
+            CreateMap<InventorySnapshot, InventorySnapshotModel>(MemberList.Destination);
 
-            CreateMap<Core.Domain.InventorySnapshots.InventorySnapshot, InventorySnapshotBriefModel>(MemberList.Destination);
+            CreateMap<InventorySnapshot, InventorySnapshotBriefModel>(MemberList.Destination);
 
-            CreateMap<Core.Domain.InventorySnapshots.AssetBalanceInventory, AssetBalanceInventoryModel>();
+            CreateMap<AssetBalanceInventory, AssetBalanceInventoryModel>();
 
             CreateMap<PnLResult, PnLResultModel>(MemberList.Destination);
 
@@ -58,8 +58,8 @@ namespace Lykke.Service.MarketMakerReports
             CreateMap<WalletSettingsModel, WalletSettings>(MemberList.Destination)
                 .ForMember(dest => dest.Assets, opt => opt.Ignore());
             
-            CreateMap<NettingEngine.Client.RabbitMq.Trades.LykkeTrade, LykkeTrade>(MemberList.Source);
-            CreateMap<NettingEngine.Client.RabbitMq.Trades.ExternalTrade, ExternalTrade>(MemberList.Source);
+            CreateMap<NettingEngine.Contract.Trades.LykkeTrade, LykkeTrade>(MemberList.Source);
+            CreateMap<NettingEngine.Contract.Trades.ExternalTrade, ExternalTrade>(MemberList.Source);
         }
     }
 }
