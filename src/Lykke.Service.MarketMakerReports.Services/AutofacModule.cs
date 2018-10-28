@@ -3,6 +3,8 @@ using JetBrains.Annotations;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.MarketMakerReports.Services.RealisedPnL;
 using Lykke.Service.MarketMakerReports.Services.Settings;
+using Lykke.Service.MarketMakerReports.Services.Trades;
+using Lykke.Service.MarketMakerReports.Services.TradingPnL;
 
 namespace Lykke.Service.MarketMakerReports.Services
 {

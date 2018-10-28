@@ -7,7 +7,6 @@ using Lykke.Service.MarketMakerReports.Managers;
 using Lykke.Service.MarketMakerReports.Rabbit.Subscribers;
 using Lykke.Service.MarketMakerReports.Settings;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings.Rabbit;
-using Lykke.Service.NettingEngine.Client;
 using Lykke.Service.RateCalculator.Client;
 using Lykke.SettingsReader;
 using IStartable = Lykke.Service.MarketMakerReports.Managers.IStartable;
@@ -40,7 +39,6 @@ namespace Lykke.Service.MarketMakerReports
             RegisterRabbit(builder);
             
             builder.RegisterRateCalculatorClient(_appSettings.CurrentValue.RateCalculatorServiceClient.ServiceUrl);
-            builder.RegisterNettingEngineClient(_appSettings.CurrentValue.NettingEngineServiceClient, null);
             
             builder.RegisterAssetsClient(AssetServiceSettings
                 .Create(new Uri(_appSettings.CurrentValue.AssetsServiceClient.ServiceUrl),

@@ -5,7 +5,7 @@ using Lykke.Service.MarketMakerReports.Core.Domain.Trades;
 using Lykke.Service.MarketMakerReports.Core.Repositories;
 using Lykke.Service.MarketMakerReports.Core.Services;
 
-namespace Lykke.Service.MarketMakerReports.Services
+namespace Lykke.Service.MarketMakerReports.Services.Trades
 {
     public class LykkeTradeService : ILykkeTradeService
     {
