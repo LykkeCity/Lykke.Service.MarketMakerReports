@@ -36,15 +36,6 @@ namespace Lykke.Service.MarketMakerReports
 
             CreateMap<AssetBalanceInventory, AssetBalanceInventoryModel>();
 
-            CreateMap<PnLResult, PnLResultModel>(MemberList.Destination);
-
-            CreateMap<AssetPnL, AssetPnLModel>()
-                .ForMember(x => x.StartBalance, m => m.MapFrom(x => x.StartBalance.Balance))
-                .ForMember(x => x.StartBalanceInUsd, m => m.MapFrom(x => x.StartBalance.BalanceInUsd))
-                .ForMember(x => x.StartPrice, m => m.MapFrom(x => x.StartBalance.Price))
-                .ForMember(x => x.EndBalance, m => m.MapFrom(x => x.EndBalance.Balance))
-                .ForMember(x => x.EndBalanceInUsd, m => m.MapFrom(x => x.EndBalance.BalanceInUsd))
-                .ForMember(x => x.EndPrice, m => m.MapFrom(x => x.EndBalance.Price));
 
             CreateMap<HealthIssue, HealthIssueModel>(MemberList.Destination);
             CreateMap<HealthIssueContract, HealthIssue>(MemberList.Source);
@@ -53,13 +44,28 @@ namespace Lykke.Service.MarketMakerReports
             CreateMap<ExternalTrade, ExternalTradeModel>(MemberList.Source);
 
             CreateMap<AssetRealisedPnL, AssetRealisedPnLModel>(MemberList.Source);
-            
+
             CreateMap<WalletSettings, WalletSettingsModel>(MemberList.Source);
             CreateMap<WalletSettingsModel, WalletSettings>(MemberList.Destination)
                 .ForMember(dest => dest.Assets, opt => opt.Ignore());
-            
+
             CreateMap<NettingEngine.Contract.Trades.LykkeTrade, LykkeTrade>(MemberList.Source);
             CreateMap<NettingEngine.Contract.Trades.ExternalTrade, ExternalTrade>(MemberList.Source);
+
+            // P&L
+
+            CreateMap<PnLResult, PnLResultModel>(MemberList.Source);
+
+            CreateMap<ExchangePnL, ExchangePnLModel>(MemberList.Source);
+
+            CreateMap<AssetPnL, AssetPnLModel>(MemberList.Source)
+                .ForSourceMember(src => src.Exchange, opt => opt.Ignore())
+                .ForMember(src => src.StartBalance, opt => opt.MapFrom(o => o.StartBalance.Balance))
+                .ForMember(src => src.StartBalanceInUsd, opt => opt.MapFrom(o => o.StartBalance.BalanceInUsd))
+                .ForMember(src => src.StartPrice, opt => opt.MapFrom(o => o.StartBalance.Price))
+                .ForMember(src => src.EndBalance, opt => opt.MapFrom(o => o.EndBalance.Balance))
+                .ForMember(src => src.EndBalanceInUsd, opt => opt.MapFrom(o => o.EndBalance.BalanceInUsd))
+                .ForMember(src => src.EndPrice, opt => opt.MapFrom(o => o.EndBalance.Price));
         }
     }
 }

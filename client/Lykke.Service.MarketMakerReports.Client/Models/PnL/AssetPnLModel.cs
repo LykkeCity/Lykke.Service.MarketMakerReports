@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
 {
     /// <summary>
     /// Model for by asset PnL results
     /// </summary>
+    [PublicAPI]
     public class AssetPnLModel
     {
         /// <summary>
