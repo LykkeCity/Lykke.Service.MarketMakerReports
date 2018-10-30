@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
 {
     /// <summary>
     /// Model for by asset PnL results
     /// </summary>
+    [PublicAPI]
     public class AssetPnLModel
     {
         /// <summary>
@@ -11,9 +14,9 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
         public string Asset { get; set; }
         
         /// <summary>
-        /// Adjusted part of the PnL
+        /// Trading part of the PnL
         /// </summary>
-        public decimal Adjusted { get; set; }
+        public decimal Trading { get; set; }
         
         /// <summary>
         /// Directional part of the PnL
@@ -54,10 +57,5 @@ namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
         /// Price of the asset (amount of USD per one asset) at the end of the PnL calculation period
         /// </summary>
         public decimal EndPrice { get; set; }
-        
-        /// <summary>
-        /// Sum of all registered changes on the account (positive for deposit or negative for withdrawals)
-        /// </summary>
-        public decimal SumOfChangeDepositOperations { get; set; }
     }
 }

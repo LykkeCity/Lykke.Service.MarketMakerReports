@@ -81,12 +81,6 @@ MonitoringServiceClient:
   MonitoringServiceUrl:
     settings-key: MonitoringServiceUrl
 
-NettingEngineServiceClient:
-  Instances:
-    settings-key: NettingEngineServiceInstances
-    types:
-    - JsonArray
-
 AssetsServiceClient:
   ServiceUrl:
     settings-key: AssetsServiceUrl

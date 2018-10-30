@@ -37,7 +37,8 @@ namespace Lykke.Service.MarketMakerReports.Services
             };
         }
 
-        private static AssetBalanceInventory ComputeAssetDynamics(AssetBalanceInventory startInventory, AssetBalanceInventory endInventory)
+        private static AssetBalanceInventory ComputeAssetDynamics(AssetBalanceInventory startInventory,
+            AssetBalanceInventory endInventory)
         {
             if (startInventory == null && endInventory == null)
                 throw new InvalidOperationException("At least one inventory is required to compute dynamics");
@@ -67,7 +68,8 @@ namespace Lykke.Service.MarketMakerReports.Services
             };
         }
 
-        private static AssetInventory ComputeInventoryDynamics(AssetInventory startInventory, AssetInventory endInventory)
+        private static AssetInventory ComputeInventoryDynamics(AssetInventory startInventory,
+            AssetInventory endInventory)
         {
             if (startInventory == null && endInventory == null)
                 throw new InvalidOperationException("At least one inventory is required");
@@ -95,11 +97,14 @@ namespace Lykke.Service.MarketMakerReports.Services
             {
                 Exchange = startBalance?.Exchange ?? endBalance.Exchange,
                 Amount = endBalance?.Amount ?? 0,
-                AmountInUsd = endBalance?.AmountInUsd ?? 0
+                AmountInUsd = endBalance?.AmountInUsd ?? 0,
+                Credit = endBalance?.Credit ?? 0,
+                CreditInUsd = endBalance?.CreditInUsd ?? 0
             };
         }
 
-        private static AssetPairInventory ComputeAssetPairDynamics(AssetPairInventory startInventory, AssetPairInventory endInventory)
+        private static AssetPairInventory ComputeAssetPairDynamics(AssetPairInventory startInventory,
+            AssetPairInventory endInventory)
         {
             if (startInventory == null && endInventory == null)
                 throw new InvalidOperationException("At least one inventory is required");

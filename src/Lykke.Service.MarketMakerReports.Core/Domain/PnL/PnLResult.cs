@@ -7,9 +7,9 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
     public class PnLResult
     {
         public DateTime StartDate { get; set; }
-        
+
         public DateTime EndDate { get; set; }
-        
+
         public IEnumerable<ExchangePnL> ExchangePnLs { get; set; }
 
         public ExchangePnL OnAllExchanges
@@ -19,7 +19,7 @@ namespace Lykke.Service.MarketMakerReports.Core.Domain.PnL
                 return new ExchangePnL
                 {
                     Exchange = "Total",
-                    Adjusted = ExchangePnLs.Sum(x => x.Adjusted),
+                    Trading = ExchangePnLs.Sum(x => x.Trading),
                     Directional = ExchangePnLs.Sum(x => x.Directional)
                 };
             }

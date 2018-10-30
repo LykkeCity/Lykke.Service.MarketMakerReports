@@ -10,7 +10,7 @@ using Lykke.Service.MarketMakerReports.Core.Extensions;
 using Lykke.Service.MarketMakerReports.Core.Services;
 using Lykke.Service.MarketMakerReports.Managers;
 using Lykke.Service.MarketMakerReports.Settings.ServiceSettings.Rabbit;
-using Lykke.Service.NettingEngine.Client.RabbitMq.Trades;
+using Lykke.Service.NettingEngine.Contract.Trades;
 
 namespace Lykke.Service.MarketMakerReports.Rabbit.Subscribers
 {

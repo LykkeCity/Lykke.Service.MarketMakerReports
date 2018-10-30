@@ -28,6 +28,7 @@
     <PackageReference Include="Lykke.Sdk" Version="5.2.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
+    <PackageReference Include="Lykke.Service.NettingEngine.Contract" Version="0.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\client\Lykke.Service.MarketMakerReports.Client\Lykke.Service.MarketMakerReports.Client.csproj" />

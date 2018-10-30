@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace Lykke.Service.MarketMakerReports.Client.Models.PnL
 {
     /// <summary>
     /// PnL for a given period of time as a sum of PnLs by all the assets
     /// </summary>
+    [PublicAPI]
     public class PnLResultModel
     {
         /// <summary>
