@@ -68,7 +68,7 @@ namespace Lykke.Service.MarketMakerReports.Services.TradingPnL
                 ? new AssetInventory {Exchange = exchange}
                 : endAssetBalanceInventory.GetInventoryByExchange(exchange);
 
-            decimal tradingPnL = endAssetBalance.Price * (startAssetInventory.Volume - endAssetInventory.Volume);
+            decimal tradingPnL = endAssetBalance.Price * (endAssetInventory.VolumeInUsd - startAssetInventory.VolumeInUsd);
 
             decimal directionalPnL = startAssetBalance.Balance * (endAssetBalance.Price - startAssetBalance.Price);
 
